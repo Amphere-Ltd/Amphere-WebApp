@@ -9,6 +9,7 @@ import {
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
+import ProfilePicture from './profile-picture';
 import 'bootstrap/dist/css/bootstrap.css';
 
 /**
@@ -29,7 +30,7 @@ class ArtistSignUp extends React.Component {
             <Welcome/>
           </Route>
           <Route path={`${match.path}/profile-picture`}>
-            <p/>
+            <ProfilePicture/>
           </Route>
           <Route path={`${match.path}/set-up-epk`}>
             <p/>
