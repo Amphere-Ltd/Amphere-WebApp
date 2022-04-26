@@ -1,0 +1,32 @@
+/* Used in artist-sign-up/profile-picture. */
+#outputForIcon {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px dotted white;
+}
+
+/* Used in artist-sign-up/profile-picture. */
+#outputFor4By3 {
+    width: 400px;
+    height: 300px;
+    object-fit: cover;
+    border: 3px dotted white;
+    border-radius: 20px;
+}
+
+/* Used in artist-sign-up/profile-picture. */
+#outputFor1By1 {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border: 3px dotted white;
+    border-radius: 20px;
+}
+
+/* Used in artist-sign-up/profile-picture. */
+#spinner {
+    display: none;
+    height: 50px;
+}

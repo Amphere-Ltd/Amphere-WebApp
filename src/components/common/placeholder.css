@@ -1,0 +1,9 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+    letter-spacing: 5px;
+}

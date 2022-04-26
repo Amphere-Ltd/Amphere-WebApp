@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,400;0,700;1,100&display=swap');
+
+body {
+    background-color: black;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1, h2 {
+    letter-spacing: 5px;
+}
+
+/* Input fields for text and passwords in forms. */
+input[type=email], input[type=password], input[type=tel], input[type=text], .amphere-input-dropdown {
+    height: 25px;
+    background: black;
+    color: white;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+input[type=email]:focus, input[type=password]:focus, input[type=tel]:focus, input[type=text]:focus, .amphere-input-dropdown:focus {
+    background: #303030;
+    color: white;
+}
+
+/* Submission buttons in forms. */
+input[type=submit], .amphere-pill-button {
+    display: block;
+    width: 200px;
+    height: 50px;
+    background: white;
+    color: black;
+    text-align: center;
+    /* TODO: Temporary fix. Prevents buttons from being multi-lined. */
+    line-height: 40px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+}
+
+/* See input[type=text]. */
+.amphere-input-textarea {
+    background: black;
+    color: white;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    resize: none;
+}
+
+/* See input[type=text]:focus. */
+.amphere-input-textarea:focus {
+    background: #303030;
+    color: white;
+}
+
+/* Defines animations for objects that zoom upon hovering. */
+.zoomable {
+    cursor: pointer;
+    transition: box-shadow 0.25s, transform 0.25s; /* Animation. */
+}
+
+/* Defines animations for objects that zoom upon hovering. */
+.zoomable:hover {
+    box-shadow: 0 0 25px rgba(30, 30, 30, 0.5);
+    transform: scale(1.10);
+}
+
+/* Helper class on top of Bootstrap. */
+.bg-amphere-red {
+    background-color: #A70000;
+}
+
+/* Helper class on top of Bootstrap. */
+.container-narrow {
+    max-width: 720px;
+}
+
+/* Helper class that replaces definition in Bootstrap. */
+.font-weight-normal {
+    font-weight: 400;
+}
+
+/* Helper class that replaces definition in Bootstrap. */
+.font-weight-light {
+    font-weight: 200;
+}
+
+/* Helper class that replaces definition in Bootstrap. */
+.font-weight-bold {
+    font-weight: 700;
+}
