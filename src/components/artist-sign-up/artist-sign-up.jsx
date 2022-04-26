@@ -11,6 +11,7 @@ import BotBar from './bot-bar';
 import Welcome from './welcome';
 import ProfilePicture from './profile-picture';
 import 'bootstrap/dist/css/bootstrap.css';
+import '../common/base.css';
 
 /**
  *
