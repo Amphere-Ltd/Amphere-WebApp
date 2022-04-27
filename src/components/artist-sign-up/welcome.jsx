@@ -1,7 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
+import {
+  AuthErrorCodes,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import ArtistSyncer from '../../models/firebase/syncers/artist-syncer';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../common/base.css';
+import service from '../../models/firebase/service';
 
 /**
  *
@@ -9,26 +17,38 @@ import '../common/base.css';
 class Welcome extends React.Component {
   /**
    *
-   * @param props
+   * @param {Welcome.propTypes} props
    */
   constructor(props) {
     super(props);
     this.state = {
       shouldRedirect: false,
+      displayName: '',
+      mgtEmail: '',
+      password: '',
     };
   }
 
   /**
    *
-   * @param event
+   * @param {Event} event
    */
   handleFormChange(event) {
     switch (event.target.name) {
       case 'displayName':
+        this.setState((prevState) => {
+          return {...prevState, displayName: event.target.value};
+        });
         break;
       case 'mgtEmail':
+        this.setState((prevState) => {
+          return {...prevState, mgtEmail: event.target.value};
+        });
         break;
       case 'password':
+        this.setState((prevState) => {
+          return {...prevState, password: event.target.value};
+        });
         break;
       default:
         break;
@@ -37,10 +57,46 @@ class Welcome extends React.Component {
 
   /**
    *
-   * @param event
+   * @param {Event} event
    */
   handleFormSubmit(event) {
-    this.setState({shouldRedirect: true});
+    if (this.state.displayName === '' ||
+      this.state.mgtEmail === '' ||
+      this.state.password === '') {
+      this.props.onError('Please fill in your details to continue.');
+      return;
+    }
+
+    // TODO: Validate regex.
+
+    createUserWithEmailAndPassword(
+        service.auth,
+        this.state.mgtEmail,
+        this.state.password,
+    ).then((userCredential) => {
+      const user = userCredential.user;
+      const artistSyncer = new ArtistSyncer(user.uid);
+      artistSyncer.displayName = this.state.displayName;
+      // TODO: Fill in EPK.
+
+      this.setState((prevState) => {
+        return {...prevState, shouldRedirect: true};
+      });
+    }).catch((error) => {
+      if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
+        signInWithEmailAndPassword(
+            service.auth,
+            this.state.mgtEmail,
+            this.state.password,
+        ).then((userCredential) => {
+          this.setState((prevState) => {
+            return {...prevState, shouldRedirect: true};
+          });
+        }).catch((error) => {
+          this.props.onError(error.message);
+        });
+      }
+    });
   }
 
   /**
@@ -74,7 +130,7 @@ class Welcome extends React.Component {
               </label>
               <div className="col-sm-10">
                 <input type="text" className="form-control" id="displayName"
-                  name="displayName"
+                  name="displayName" value={this.state.displayName}
                   placeholder="Enter your artist name or band name…"
                   onChange={this.handleFormChange}/>
               </div>
@@ -84,7 +140,7 @@ class Welcome extends React.Component {
                 className="col-sm-2 col-form-label">Email:</label>
               <div className="col-sm-10">
                 <input type="email" className="form-control" id="mgtEmail"
-                  name="mgtEmail"
+                  name="mgtEmail" value={this.state.mgtEmail}
                   placeholder="Enter your management email…"
                   onChange={this.handleFormChange}/>
               </div>
@@ -94,7 +150,8 @@ class Welcome extends React.Component {
                 className="col-sm-2 col-form-label">Password:</label>
               <div className="col-sm-10">
                 <input type="password" className="form-control" id="password"
-                  name="password" placeholder="Enter your password…"
+                  name="password" value={this.state.password}
+                  placeholder="Enter your password…"
                   onChange={this.handleFormChange}/>
               </div>
             </div>
@@ -105,5 +162,9 @@ class Welcome extends React.Component {
     );
   }
 }
+
+Welcome.propTypes = {
+  onError: PropTypes.func,
+};
 
 export default Welcome;

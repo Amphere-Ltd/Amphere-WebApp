@@ -6,6 +6,10 @@ import {
   Link,
   useRouteMatch,
 } from 'react-router-dom';
+import {
+  onAuthStateChanged,
+} from 'firebase/auth';
+import service from '../../models/firebase/service';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
@@ -17,18 +21,51 @@ import '../common/base.css';
  *
  */
 class ArtistSignUp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currUser: null,
+      error: null,
+    };
+  }
+
+  componentDidMount() {
+    onAuthStateChanged(service.auth, (user) => {
+      if (user) {
+        this.setState((prevState) => {
+          return {...prevState, currUser: user};
+        });
+      } else {
+        this.setState((prevState) => {
+          return {...prevState, currUser: null};
+        });
+      }
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+  }
+
+  onError(err) {
+    this.setState((prevState) => {
+      return {...prevState, error: err};
+    });
+  }
+
   /**
    *
    * @return {JSX.Element}
    */
   render() {
-    const match = useRouteMatch();
-    return (
-      <div className="container">
-        <TopBar/>
+    let content;
+    if (this.state.currUser === null) {
+      // TODO: Replace this with loading screen.
+      content = <Welcome onError={this.onError}/>;
+    } else {
+      content = (
         <Switch>
           <Route path={`${match.path}`}>
-            <Welcome/>
+            <Welcome onError={this.onError}/>
           </Route>
           <Route path={`${match.path}/profile-picture`}>
             <ProfilePicture/>
@@ -52,6 +89,20 @@ class ArtistSignUp extends React.Component {
             <p/>
           </Route>
         </Switch>
+      );
+    }
+
+    const match = useRouteMatch();
+    return (
+      <div className="container">
+        <TopBar/>
+        {
+          this.state.error &&
+          <div className="alert alert-danger my-4" role="alert">
+            {this.state.error}
+          </div>
+        }
+        {content}
         <BotBar/>
       </div>
     );

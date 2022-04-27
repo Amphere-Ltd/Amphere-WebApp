@@ -1,6 +1,7 @@
-const keys = {
-  ERRORS: 'ERRORS',
-  CURR_USER_UID: 'CURR_USER_UID',
+const ROOT_NAME = 'AMPHERE_WEBAPP';
+
+const sessionKeys = {
+  ERRORS: `${ROOT_NAME}:ERRORS`,
 };
 
-export {keys};
+export {sessionKeys};
