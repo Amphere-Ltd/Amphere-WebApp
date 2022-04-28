@@ -1,9 +1,8 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
-  Switch,
+  BrowserRouter,
+  Routes,
   Route,
-  Link,
   useRouteMatch,
 } from 'react-router-dom';
 import {
@@ -63,32 +62,19 @@ class ArtistSignUp extends React.Component {
       content = <Welcome onError={this.onError}/>;
     } else {
       content = (
-        <Switch>
-          <Route path={`${match.path}`}>
-            <Welcome onError={this.onError}/>
-          </Route>
-          <Route path={`${match.path}/profile-picture`}>
-            <ProfilePicture/>
-          </Route>
-          <Route path={`${match.path}/set-up-epk`}>
-            <p/>
-          </Route>
-          <Route path={`${match.path}/connect-socials`}>
-            <p/>
-          </Route>
-          <Route path={`${match.path}/connect-to-spotify`}>
-            <p/>
-          </Route>
-          <Route path={`${match.path}/connect-to-spotify-complete`}>
-            <p/>
-          </Route>
-          <Route path={`${match.path}/review`}>
-            <p/>
-          </Route>
-          <Route path={`${match.path}/thank-you`}>
-            <p/>
-          </Route>
-        </Switch>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/sign-up' element={<Welcome/>}>
+              <Route path='/profile-picture' element={<ProfilePicture/>}/>
+              <Route path='/set-up-epk' element={<p/>}/>
+              <Route path='/connect-socials' element={<p/>}/>
+              <Route path='/connect-to-spotify' element={<p/>}/>
+              <Route path='/connect-to-spotify-complete' element={<p/>}/>
+              <Route path='/review' element={<p/>}/>
+              <Route path='/thank-you' element={<p/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
       );
     }
 

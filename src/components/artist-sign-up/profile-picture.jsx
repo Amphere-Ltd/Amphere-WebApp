@@ -4,7 +4,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../common/base.css';
 import './profile-picture.css';
 
+/**
+ *
+ */
 class ProfilePicture extends React.Component {
+  /**
+   *
+   * @param {ProfilePicture.propTypes} props
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -12,24 +19,46 @@ class ProfilePicture extends React.Component {
     };
   }
 
+  /**
+   *
+   * @param {Event} event
+   */
   handleFormChange(event) {
   }
 
+  /**
+   *
+   * @param {Event} event
+   */
   handleFormSubmit(event) {
     this.setState({shouldRedirect: true});
   }
 
+  /**
+   *
+   * @param {File} imgFile
+   * @param {String} elementID
+   */
   addImgFileToInputElement(imgFile, elementID) {
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(imgFile);
     document.getElementById(elementID).files = dataTransfer.files;
   }
 
+  /**
+   *
+   * @param {Event} event
+   * @param {String} elementID
+   */
   displayUpload(event, elementID) {
     document.getElementById(elementID).src =
       URL.createObjectURL(event.target.files[0]);
   }
 
+  /**
+   *
+   * @param {Event} event
+   */
   displayForAllSizes(event) {
     const uploadIDs = ['imgForIcon', 'imgFor4By3', 'imgFor1By1'];
     const outputIDs = ['outputForIcon', 'outputFor4By3', 'outputFor1By1'];
@@ -40,11 +69,18 @@ class ProfilePicture extends React.Component {
       this.displayUpload(event, outputID));
   }
 
+  /**
+   *
+   */
   displaySpinner() {
     document.getElementById('spinner').style.display = 'flex';
     document.getElementById('submitButton').style.display = 'none';
   }
 
+  /**
+   *
+   * @return {JSX.Element}
+   */
   render() {
     if (this.state.shouldRedirect) return <Redirect to='/set-up-epk'/>;
 
@@ -154,5 +190,7 @@ class ProfilePicture extends React.Component {
     );
   }
 }
+
+ProfilePicture.propTypes = {};
 
 export default ProfilePicture;
