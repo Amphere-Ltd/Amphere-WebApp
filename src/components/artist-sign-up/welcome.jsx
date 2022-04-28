@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Navigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {
   AuthErrorCodes,
   createUserWithEmailAndPassword,
@@ -105,7 +105,8 @@ class Welcome extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to='/profile-picture'/>;
+      useNavigate()('/sign-up/profile-picture');
+      return;
     }
 
     return (
@@ -117,7 +118,7 @@ class Welcome extends React.Component {
         <div className="container-narrow mx-auto">
           <div className="my-5 text-center">
             <img className="img-fluid"
-              src="../../assets/banner-empty-user-card.png"
+              src={require('../../assets/banner-empty-user-card.png')}
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Navigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../common/base.css';
 import './profile-picture.css';
@@ -83,7 +83,8 @@ class ProfilePicture extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to='/set-up-epk'/>;
+      useNavigate()('/sign-up/set-up-epk');
+      return;
     }
 
     return (

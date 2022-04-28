@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  BrowserRouter,
   Routes,
   Route,
 } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import {
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -26,7 +26,6 @@ class ArtistSignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currUser: null,
       error: null,
     };
   }
@@ -37,13 +36,9 @@ class ArtistSignUp extends React.Component {
   componentDidMount() {
     onAuthStateChanged(service.auth, (user) => {
       if (user) {
-        this.setState((prevState) => {
-          return {...prevState, currUser: user};
-        });
+        this.props.setCurrUser(user);
       } else {
-        this.setState((prevState) => {
-          return {...prevState, currUser: null};
-        });
+        this.props.setCurrUser(null);
       }
     });
   }
@@ -78,19 +73,17 @@ class ArtistSignUp extends React.Component {
       content = <Welcome onError={this.onError}/>;
     } else {
       content = (
-        <BrowserRouter>
-          <Routes>
-            <Route path='/sign-up' element={<Welcome/>}>
-              <Route path='/profile-picture' element={<ProfilePicture/>}/>
-              <Route path='/set-up-epk' element={<p/>}/>
-              <Route path='/connect-socials' element={<p/>}/>
-              <Route path='/connect-to-spotify' element={<p/>}/>
-              <Route path='/connect-to-spotify-complete' element={<p/>}/>
-              <Route path='/review' element={<p/>}/>
-              <Route path='/thank-you' element={<p/>}/>
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Welcome/>}>
+            <Route path='profile-picture' element={<ProfilePicture/>}/>
+            <Route path='set-up-epk' element={<p/>}/>
+            <Route path='connect-socials' element={<p/>}/>
+            <Route path='connect-to-spotify' element={<p/>}/>
+            <Route path='connect-to-spotify-complete' element={<p/>}/>
+            <Route path='review' element={<p/>}/>
+            <Route path='thank-you' element={<p/>}/>
+          </Route>
+        </Routes>
       );
     }
 
@@ -110,6 +103,9 @@ class ArtistSignUp extends React.Component {
   }
 }
 
-ArtistSignUp.propTypes = {};
+ArtistSignUp.propTypes = {
+  getCurrUser: PropTypes.func,
+  setCurrUser: PropTypes.func,
+};
 
 export default ArtistSignUp;
