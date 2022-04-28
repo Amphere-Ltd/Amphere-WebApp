@@ -3,7 +3,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  useRouteMatch,
 } from 'react-router-dom';
 import {
   onAuthStateChanged,
@@ -20,6 +19,10 @@ import '../common/base.css';
  *
  */
 class ArtistSignUp extends React.Component {
+  /**
+   *
+   * @param {ArtistSignUp.propTypes} props
+   */
   constructor(props) {
     super(props);
     this.state = {
@@ -28,6 +31,9 @@ class ArtistSignUp extends React.Component {
     };
   }
 
+  /**
+   *
+   */
   componentDidMount() {
     onAuthStateChanged(service.auth, (user) => {
       if (user) {
@@ -42,9 +48,19 @@ class ArtistSignUp extends React.Component {
     });
   }
 
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
   componentDidUpdate(prevProps, prevState, snapshot) {
   }
 
+  /**
+   *
+   * @param {String} err
+   */
   onError(err) {
     this.setState((prevState) => {
       return {...prevState, error: err};
@@ -78,7 +94,6 @@ class ArtistSignUp extends React.Component {
       );
     }
 
-    const match = useRouteMatch();
     return (
       <div className="container">
         <TopBar/>
@@ -94,5 +109,7 @@ class ArtistSignUp extends React.Component {
     );
   }
 }
+
+ArtistSignUp.propTypes = {};
 
 export default ArtistSignUp;

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {
   AuthErrorCodes,
   createUserWithEmailAndPassword,
@@ -104,7 +104,9 @@ class Welcome extends React.Component {
    * @return {JSX.Element}
    */
   render() {
-    if (this.state.shouldRedirect) return <Redirect to='/profile-picture'/>;
+    if (this.state.shouldRedirect) {
+      return <Navigate replace to='/profile-picture'/>;
+    }
 
     return (
       <div className="container">

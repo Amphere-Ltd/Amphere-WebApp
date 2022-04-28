@@ -1,3 +1,8 @@
+import React from 'react';
+
+/**
+ *
+ */
 class BotBar extends React.Component {
   /**
    *
@@ -5,14 +10,14 @@ class BotBar extends React.Component {
    */
   render() {
     return (
-        <div className="row my-5">
-          <p className="text-center font-weight-light text-muted">
-            <small>
+      <div className="row my-5">
+        <p className="text-center font-weight-light text-muted">
+          <small>
               Amphere Web App.<br/>
               Copyright &copy; 2022 Amphere Ltd. All rights reserved.
-            </small>
-          </p>
-        </div>
+          </small>
+        </p>
+      </div>
     );
   }
 }
