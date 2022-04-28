@@ -74,15 +74,14 @@ class ArtistSignUp extends React.Component {
     } else {
       content = (
         <Routes>
-          <Route path='/' element={<Welcome/>}>
-            <Route path='profile-picture' element={<ProfilePicture/>}/>
-            <Route path='set-up-epk' element={<p/>}/>
-            <Route path='connect-socials' element={<p/>}/>
-            <Route path='connect-to-spotify' element={<p/>}/>
-            <Route path='connect-to-spotify-complete' element={<p/>}/>
-            <Route path='review' element={<p/>}/>
-            <Route path='thank-you' element={<p/>}/>
-          </Route>
+          <Route path='*' element={<Welcome/>}/>
+          <Route path='profile-picture' element={<ProfilePicture/>}/>
+          <Route path='set-up-epk' element={<p/>}/>
+          <Route path='connect-socials' element={<p/>}/>
+          <Route path='connect-to-spotify' element={<p/>}/>
+          <Route path='connect-to-spotify-complete' element={<p/>}/>
+          <Route path='review' element={<p/>}/>
+          <Route path='thank-you' element={<p/>}/>
         </Routes>
       );
     }

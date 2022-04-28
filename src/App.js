@@ -64,7 +64,7 @@ class App extends React.Component {
     return (
       <Routes>
         <Route path={'*'} element={<Navigate replace to={'/sign-up'}/>}/>
-        <Route path={'sign-up'} element={
+        <Route path={'sign-up/*'} element={
           <ArtistSignUp
             getCurrUser={this.getCurrUser} setCurrUser={this.setCurrUser}/>
         }/>
