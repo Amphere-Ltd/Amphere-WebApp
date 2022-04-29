@@ -1,4 +1,5 @@
 import AbstractSyncer from './abstract-syncer';
+import epkSyncHandler from './epk-syncer';
 
 /**
  *
@@ -6,7 +7,7 @@ import AbstractSyncer from './abstract-syncer';
 class ArtistSyncer extends AbstractSyncer {
   /**
    *
-   * @param firebaseAuthUid
+   * @param {String} firebaseAuthUid
    */
   constructor(firebaseAuthUid) {
     super(
@@ -48,6 +49,41 @@ class ArtistSyncer extends AbstractSyncer {
     this.signUpProg = '\\null';
     this.username = '\\null';
   }
+
+  /**
+   *
+   * @return {Promise<unknown>}
+   */
+  async getEpkSyncer() {
+    return await epkSyncHandler.getSyncer(this.epkID);
+  }
 }
 
-export default ArtistSyncer;
+const syncers = new Map();
+
+const artistSyncHandler = {
+  getSyncer: async (firebaseAuthUid) => {
+    if (syncers.has(firebaseAuthUid)) {
+      // We have a locally-saved copy of the ArtistSyncer.
+      return syncers.get(firebaseAuthUid);
+    }
+
+    // We need to either create a new Syncer or pull from the cloud.
+    const syncer = new ArtistSyncer(firebaseAuthUid);
+    const remoteSyncer = await syncer.pullInstanceOfSelf();
+    const latestSyncer = remoteSyncer === null ? syncer : remoteSyncer;
+
+    if (remoteSyncer === null) {
+      // This is a newly-created Syncer.
+      const epkSyncer = await epkSyncHandler.newSyncer();
+      latestSyncer.epkID = epkSyncer.firebaseDocName;
+      await latestSyncer.push();
+    }
+
+    // Save this copy locally.
+    syncers.set(firebaseAuthUid, latestSyncer);
+    return latestSyncer;
+  },
+};
+
+export default artistSyncHandler;

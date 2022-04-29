@@ -1,3 +1,5 @@
+import {addDoc, collection} from 'firebase/firestore';
+import service from '../service';
 import AbstractSyncer from './abstract-syncer';
 
 /**
@@ -6,7 +8,7 @@ import AbstractSyncer from './abstract-syncer';
 class EpkSyncer extends AbstractSyncer {
   /**
    *
-   * @param epkID
+   * @param {String} epkID
    */
   constructor(epkID) {
     super(
@@ -15,6 +17,12 @@ class EpkSyncer extends AbstractSyncer {
         (snapshot, options) => {
           const data = snapshot.data(options);
           const instance = new EpkSyncer(epkID);
+
+          if (data === {}) {
+            // This is a newly-created document.
+            return instance;
+          }
+
           // Remember to add any new fields that need syncing here.
           instance.accessToSpotify = data.accessToSpotify;
           instance.biography = data.biography;
@@ -30,6 +38,7 @@ class EpkSyncer extends AbstractSyncer {
           instance.linkToSpotify = data.linkToSpotify;
           instance.linkToSoundCloud = data.linkToSoundCloud;
           instance.proPicFilenames = data.proPicFilenames;
+          return instance;
         },
         (epkSyncer) => {
           return {
@@ -70,4 +79,25 @@ class EpkSyncer extends AbstractSyncer {
   }
 }
 
-export default EpkSyncer;
+const syncers = new Map();
+
+const epkSyncHandler = {
+  newSyncer: async () => {
+    const docRef = await addDoc(collection(service.db, 'epks'), {});
+    return new EpkSyncer(docRef.id);
+  },
+  getSyncer: async (epkID) => {
+    if (syncers.has(epkID)) {
+      return syncers.get(epkID);
+    }
+
+    const syncer = new EpkSyncer(epkID);
+    const remoteSyncer = await syncer.pullInstanceOfSelf();
+    const latestSyncer = remoteSyncer === null ? syncer : remoteSyncer;
+
+    syncers.set(epkID, latestSyncer);
+    return latestSyncer;
+  },
+};
+
+export default epkSyncHandler;

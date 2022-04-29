@@ -1,4 +1,4 @@
-import {doc, setDoc} from 'firebase/firestore';
+import {doc, getDoc, setDoc} from 'firebase/firestore';
 import service from '../service';
 
 /**
@@ -7,6 +7,10 @@ import service from '../service';
 class AbstractSyncer {
   /**
    *
+   * @param {String} firestoreColName
+   * @param {String} firestoreDocName
+   * @param {Function} fromFirestore
+   * @param {Function} toFirestore
    */
   constructor(
       firestoreColName,
@@ -30,8 +34,16 @@ class AbstractSyncer {
   /**
    *
    */
-  async pull() {
-    // TODO
+  async pullInstanceOfSelf() {
+    const ref = doc(service.db, this.firestoreColName, this.firestoreDocName)
+        .withConverter(this.converter);
+    const docSnap = await getDoc(ref);
+
+    if (docSnap.exists()) {
+      return docSnap.data;
+    }
+
+    return null;
   }
 
   /**

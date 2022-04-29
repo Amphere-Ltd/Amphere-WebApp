@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import ArtistSyncer from '../../models/firebase/syncers/artist-syncer';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../common/base.css';
 import service from '../../models/firebase/service';
@@ -75,9 +75,15 @@ class Welcome extends React.Component {
         this.state.password,
     ).then((userCredential) => {
       const user = userCredential.user;
-      const artistSyncer = new ArtistSyncer(user.uid);
+
+      const artistSyncer = artistSyncHandler.getSyncer(user.uid);
       artistSyncer.displayName = this.state.displayName;
-      // TODO: Fill in EPK.
+      artistSyncer.push();
+
+      const epkSyncer = artistSyncer.getEpkSyncer();
+      epkSyncer.displayName = this.state.displayName;
+      epkSyncer.mgtEmail = this.state.mgtEmail;
+      epkSyncer.push();
 
       this.setState((prevState) => {
         return {...prevState, shouldRedirect: true};
