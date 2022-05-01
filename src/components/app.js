@@ -6,7 +6,9 @@ import {
 } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import {User} from 'firebase/auth';
-import ArtistSignUp from './components/artist-sign-up/artist-sign-up';
+import ArtistSignUp from './artist-sign-up/artist-sign-up';
+import 'bootstrap/dist/css/bootstrap.css';
+import './app.css';
 
 /**
  *

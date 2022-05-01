@@ -8,12 +8,11 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import service from '../../models/firebase/service';
+import LoadingScreen from '../common/loading-screen';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
 import ProfilePicture from './profile-picture';
-import 'bootstrap/dist/css/bootstrap.css';
-import '../common/base.css';
 
 /**
  *
@@ -26,6 +25,7 @@ class ArtistSignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isFindingUser: true,
       error: null,
     };
   }
@@ -40,6 +40,9 @@ class ArtistSignUp extends React.Component {
       } else {
         this.props.setCurrUser(null);
       }
+      this.setState((prevState) => {
+        return {...prevState, isFindingUser: false};
+      });
     });
   }
 
@@ -68,14 +71,19 @@ class ArtistSignUp extends React.Component {
    */
   render() {
     let content;
-    if (this.state.currUser === null) {
-      // TODO: Replace this with loading screen.
+
+    if (this.state.isFindingUser) {
+      return <LoadingScreen/>;
+    }
+
+    if (this.props.getCurrUser() === undefined) {
       content = <Welcome onError={this.onError}/>;
     } else {
       content = (
         <Routes>
-          <Route path='*' element={<Welcome/>}/>
-          <Route path='profile-picture' element={<ProfilePicture/>}/>
+          <Route path='*' element={<Welcome onError={this.onError}/>}/>
+          <Route path='profile-picture'
+            element={<ProfilePicture onError={this.onError}/>}/>
           <Route path='set-up-epk' element={<p/>}/>
           <Route path='connect-socials' element={<p/>}/>
           <Route path='connect-to-spotify' element={<p/>}/>

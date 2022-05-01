@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {useNavigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {
   AuthErrorCodes,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
-import 'bootstrap/dist/css/bootstrap.css';
-import '../common/base.css';
 import service from '../../models/firebase/service';
 
 /**
@@ -27,6 +25,9 @@ class Welcome extends React.Component {
       mgtEmail: '',
       password: '',
     };
+
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   /**
@@ -60,6 +61,8 @@ class Welcome extends React.Component {
    * @param {Event} event
    */
   handleFormSubmit(event) {
+    event.preventDefault();
+
     if (this.state.displayName === '' ||
       this.state.mgtEmail === '' ||
       this.state.password === '') {
@@ -111,8 +114,7 @@ class Welcome extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      useNavigate()('/sign-up/profile-picture');
-      return;
+      return <Navigate replace to={'/sign-up/profile-picture'}/>;
     }
 
     return (

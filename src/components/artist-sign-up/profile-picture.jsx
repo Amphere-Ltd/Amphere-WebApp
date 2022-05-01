@@ -1,7 +1,6 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css';
-import '../common/base.css';
+import PropTypes from 'prop-types';
 import './profile-picture.css';
 
 /**
@@ -172,7 +171,7 @@ class ProfilePicture extends React.Component {
             {/* Submit button that redirects to next page */}
             <div className="row my-3" id="submitButton">
               <input type="submit" name="action" value="N E X T"
-                onClick="displaySpinner();"/>
+                onClick={this.displaySpinner()}/>
             </div>
             <div className="row my-3 justify-content-center align-items-center"
               id="spinner">
@@ -194,6 +193,8 @@ class ProfilePicture extends React.Component {
   }
 }
 
-ProfilePicture.propTypes = {};
+ProfilePicture.propTypes = {
+  onError: PropTypes.func,
+};
 
 export default ProfilePicture;
