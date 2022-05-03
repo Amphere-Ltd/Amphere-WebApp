@@ -1,10 +1,9 @@
 import React from 'react';
-import {Navigate, useNavigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import * as path from 'path';
 import {ref, uploadBytes} from 'firebase/storage';
 import service from '../../models/firebase/service';
-import artistSyncer from '../../models/firebase/syncers/artist-syncer';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import './profile-picture.css';
 
 /**
@@ -27,7 +26,6 @@ class ProfilePicture extends React.Component {
 
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.displaySpinner = this.displaySpinner.bind(this);
   }
 
   /**
@@ -77,18 +75,17 @@ class ProfilePicture extends React.Component {
   handleFormSubmit(event) {
     event.preventDefault();
 
+    this.displaySpinner();
+
     // TODO: Check for no image uploaded.
 
     const sizeIDs = ['imgForIcon', 'imgFor4By3', 'imgFor1By1'];
-
     const proPicFilenames = [];
-    for (const sizeID in sizeIDs) {
-      if (!sizeIDs.hasOwnProperty(sizeID)) continue;
-
+    let uploadCount = 0;
+    for (const sizeID of sizeIDs) {
       const picture = this.state[sizeID];
-      const fileExt = path.parse(picture.filename).ext;
+      const fileExt = picture.name.split('.').pop();
       const newFileName = `ProfilePicture-${sizeID.substring(6)}${fileExt}`;
-      picture.filename = newFileName;
       proPicFilenames.push(newFileName);
 
       // TODO: Reusable code.
@@ -96,14 +93,21 @@ class ProfilePicture extends React.Component {
       const uploadPath = `epkMedia/${userUid}/${newFileName}`;
       const storageRef = ref(service.storage, uploadPath);
       uploadBytes(storageRef, picture).then((snapshot) => {
-        artistSyncer.getSyncer(userUid).getEpkSyncer().then((epkSyncer) => {
-          epkSyncer.proPicFilenames = proPicFilenames;
-          epkSyncer.push();
+        uploadCount += 1;
+
+        artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
+          artistSyncer.getEpkSyncer().then((epkSyncer) => {
+            epkSyncer.proPicFilenames = proPicFilenames;
+            epkSyncer.push();
+          });
         });
 
-        this.setState((prevState) => {
-          return {...prevState, shouldRedirect: true};
-        });
+        if (uploadCount === proPicFilenames.length) {
+          // TODO: Messy.
+          this.setState((prevState) => {
+            return {...prevState, shouldRedirect: true};
+          });
+        }
       }).catch((error) => {
         this.props.onError(error.message);
       });
@@ -246,8 +250,7 @@ class ProfilePicture extends React.Component {
             </div>
             {/* Submit button that redirects to next page */}
             <div className="row my-3" id="submitButton">
-              <input type="submit" name="action" value="N E X T"
-                onClick={this.displaySpinner}/>
+              <input type="submit" name="action" value="N E X T"/>
             </div>
             <div className="row my-3 justify-content-center align-items-center"
               id="spinner">

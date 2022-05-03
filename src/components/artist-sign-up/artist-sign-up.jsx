@@ -29,6 +29,8 @@ class ArtistSignUp extends React.Component {
       isFindingUser: true,
       error: null,
     };
+
+    this.onError = this.onError.bind(this);
   }
 
   /**
