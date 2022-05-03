@@ -13,6 +13,7 @@ import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
 import ProfilePicture from './profile-picture';
+import SetUpEpk from './set-up-epk';
 
 /**
  *
@@ -83,13 +84,20 @@ class ArtistSignUp extends React.Component {
         <Routes>
           <Route path='*' element={<Welcome onError={this.onError}/>}/>
           <Route path='profile-picture'
-            element={<ProfilePicture onError={this.onError}/>}/>
-          <Route path='set-up-epk' element={<p/>}/>
-          <Route path='connect-socials' element={<p/>}/>
-          <Route path='connect-to-spotify' element={<p/>}/>
-          <Route path='connect-to-spotify-complete' element={<p/>}/>
-          <Route path='review' element={<p/>}/>
-          <Route path='thank-you' element={<p/>}/>
+            element={
+              <ProfilePicture getCurrUser={this.props.getCurrUser}
+                onError={this.onError}/>
+            }/>
+          <Route path='set-up-epk'
+            element={
+              <SetUpEpk getCurrUser={this.props.getCurrUser}
+                onError={this.onError}/>
+            }/>
+          <Route path='connect-socials' element={<LoadingScreen/>}/>
+          <Route path='connect-to-spotify' element={<LoadingScreen/>}/>
+          <Route path='connect-to-spotify-complete' element={<LoadingScreen/>}/>
+          <Route path='review' element={<LoadingScreen/>}/>
+          <Route path='thank-you' element={<LoadingScreen/>}/>
         </Routes>
       );
     }

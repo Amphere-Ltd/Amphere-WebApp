@@ -2,6 +2,7 @@ import {initializeApp} from 'firebase/app';
 import {getAuth} from 'firebase/auth';
 import {getAnalytics} from 'firebase/analytics';
 import {getFirestore} from 'firebase/firestore';
+import {getStorage} from 'firebase/storage';
 // Follow this pattern to import other Firebase services
 // import { } from 'firebase/<service>';
 
@@ -38,12 +39,14 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const service = {
   app: app,
   analytics: analytics,
   auth: auth,
   db: db,
+  storage: storage,
 };
 
 export default service;

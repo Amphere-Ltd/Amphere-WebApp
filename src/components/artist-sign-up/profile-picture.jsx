@@ -1,6 +1,10 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as path from 'path';
+import {ref, uploadBytes} from 'firebase/storage';
+import service from '../../models/firebase/service';
+import artistSyncer from '../../models/firebase/syncers/artist-syncer';
 import './profile-picture.css';
 
 /**
@@ -15,7 +19,15 @@ class ProfilePicture extends React.Component {
     super(props);
     this.state = {
       shouldRedirect: false,
+      // See handleFormSubmit().
+      imgForIcon: null,
+      imgFor4By3: null,
+      imgFor1By1: null,
     };
+
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.displaySpinner = this.displaySpinner.bind(this);
   }
 
   /**
@@ -23,6 +35,39 @@ class ProfilePicture extends React.Component {
    * @param {Event} event
    */
   handleFormChange(event) {
+    switch (event.target.name) {
+      case 'imgForIcon':
+        this.setState((prevState) => {
+          return {...prevState, imgForIcon: event.target.files[0]};
+        });
+        this.displayUpload(event, 'outputForIcon');
+        break;
+      case 'imgFor4By3':
+        this.setState((prevState) => {
+          return {...prevState, imgFor4By3: event.target.files[0]};
+        });
+        this.displayUpload(event, 'outputFor4By3');
+        break;
+      case 'imgFor1By1':
+        this.setState((prevState) => {
+          return {...prevState, imgFor1By1: event.target.files[0]};
+        });
+        this.displayUpload(event, 'outputFor1By1');
+        break;
+      case 'imgForAllSizes':
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            imgForIcon: event.target.files[0],
+            imgFor4By3: event.target.files[0],
+            imgFor1By1: event.target.files[0],
+          };
+        });
+        this.displayForAllSizes(event);
+        break;
+      default:
+        break;
+    }
   }
 
   /**
@@ -30,7 +75,39 @@ class ProfilePicture extends React.Component {
    * @param {Event} event
    */
   handleFormSubmit(event) {
-    this.setState({shouldRedirect: true});
+    event.preventDefault();
+
+    // TODO: Check for no image uploaded.
+
+    const sizeIDs = ['imgForIcon', 'imgFor4By3', 'imgFor1By1'];
+
+    const proPicFilenames = [];
+    for (const sizeID in sizeIDs) {
+      if (!sizeIDs.hasOwnProperty(sizeID)) continue;
+
+      const picture = this.state[sizeID];
+      const fileExt = path.parse(picture.filename).ext;
+      const newFileName = `ProfilePicture-${sizeID.substring(6)}${fileExt}`;
+      picture.filename = newFileName;
+      proPicFilenames.push(newFileName);
+
+      // TODO: Reusable code.
+      const userUid = this.props.getCurrUser().uid;
+      const uploadPath = `epkMedia/${userUid}/${newFileName}`;
+      const storageRef = ref(service.storage, uploadPath);
+      uploadBytes(storageRef, picture).then((snapshot) => {
+        artistSyncer.getSyncer(userUid).getEpkSyncer().then((epkSyncer) => {
+          epkSyncer.proPicFilenames = proPicFilenames;
+          epkSyncer.push();
+        });
+
+        this.setState((prevState) => {
+          return {...prevState, shouldRedirect: true};
+        });
+      }).catch((error) => {
+        this.props.onError(error.message);
+      });
+    }
   }
 
   /**
@@ -82,8 +159,7 @@ class ProfilePicture extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      useNavigate()('/sign-up/set-up-epk');
-      return;
+      return <Navigate replace to={'/sign-up/set-up-epk'}/>;
     }
 
     return (
@@ -91,7 +167,7 @@ class ProfilePicture extends React.Component {
         <div className="my-4 text-center">
           <h1>Photos</h1>
         </div>
-        <form encType="multipart/form-data">
+        <form encType="multipart/form-data" onSubmit={this.handleFormSubmit}>
           <div className="container">
             <div className="row">
               {/* Preview 1 */}
@@ -106,10 +182,10 @@ class ProfilePicture extends React.Component {
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
                     name="imgForIcon" id="imgForIcon"
-                    onChange={this.displayUpload(event, 'outputForIcon')}/>
+                    onChange={this.handleFormChange}/>
                 </div>
                 <div className="row-2 d-flex justify-content-center">
-                  <label htmlFor="imgForIcon" style="cursor: pointer;">
+                  <label htmlFor="imgForIcon" style={{cursor: 'pointer'}}>
                     <img alt="" src={require('../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
@@ -127,10 +203,10 @@ class ProfilePicture extends React.Component {
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
                     name="imgFor4By3" id="imgFor4By3"
-                    onChange={this.displayUpload(event, 'outputFor4By3')}/>
+                    onChange={this.handleFormChange}/>
                 </div>
                 <div className="row-2 d-flex justify-content-center">
-                  <label htmlFor="imgFor4By3" style="cursor: pointer;">
+                  <label htmlFor="imgFor4By3" style={{cursor: 'pointer'}}>
                     <img alt="" src={require('../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
@@ -148,10 +224,10 @@ class ProfilePicture extends React.Component {
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
                     name="imgFor1By1" id="imgFor1By1"
-                    onChange={this.displayUpload(event, 'outputFor1By1')}/>
+                    onChange={this.handleFormChange}/>
                 </div>
                 <div className="row-2 d-flex justify-content-center">
-                  <label htmlFor="imgFor1By1" style="cursor: pointer;">
+                  <label htmlFor="imgFor1By1" style={{cursor: 'pointer'}}>
                     <img alt="" src={require('../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
@@ -161,21 +237,21 @@ class ProfilePicture extends React.Component {
             {/* Upload button for all three images */}
             <div className="row text-center">
               <label htmlFor="imgForAllSizes" className="amphere-pill-button"
-                style="cursor: pointer;">
+                style={{cursor: 'pointer'}}>
                 U P L O A D
               </label>
               <input type="file" className="d-none" accept="image/*"
                 name="imgForAllSizes" id="imgForAllSizes"
-                onChange={this.displayForAllSizes(event)}/>
+                onChange={this.handleFormChange}/>
             </div>
             {/* Submit button that redirects to next page */}
             <div className="row my-3" id="submitButton">
               <input type="submit" name="action" value="N E X T"
-                onClick={this.displaySpinner()}/>
+                onClick={this.displaySpinner}/>
             </div>
             <div className="row my-3 justify-content-center align-items-center"
               id="spinner">
-              <div className="spinner-border text-light" role="status">
+              <div className="spinner-grow text-light" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
               <div className="my-1 text-center text-light">
@@ -194,6 +270,7 @@ class ProfilePicture extends React.Component {
 }
 
 ProfilePicture.propTypes = {
+  getCurrUser: PropTypes.func,
   onError: PropTypes.func,
 };
 
