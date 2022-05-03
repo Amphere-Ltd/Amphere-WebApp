@@ -12,9 +12,24 @@ class SetUpEpk extends React.Component {
    */
   constructor(props) {
     super(props);
+
+    const fs = require('fs');
+    const presetGenresFile = fs.readFileSync('~/src/data/preset-music-genres.txt')
+      .toString('utf-8');
+    const presetGenres = presetGenresFile.split('\n');
+
     this.state = {
       shouldRedirect: false,
+      presetGenres: presetGenres,
+      contactPhone: null,
+      contactEmail: null,
+      genres: null,
+      biography: null,
+      forFansOf: null,
     };
+
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   /**
@@ -23,20 +38,24 @@ class SetUpEpk extends React.Component {
    */
   handleFormChange(event) {
     switch (event.target.name) {
-      case 'displayName':
+      case 'contactPhone':
         this.setState((prevState) => {
-          return {...prevState, displayName: event.target.value};
+          return {...prevState, contactPhone: event.target.value};
         });
         break;
-      case 'mgtEmail':
+      case 'contactEmail':
         this.setState((prevState) => {
-          return {...prevState, mgtEmail: event.target.value};
+          return {...prevState, contactEmail: event.target.value};
         });
         break;
-      case 'password':
+      case 'genres':
+        break;
+      case 'biography':
         this.setState((prevState) => {
-          return {...prevState, password: event.target.value};
+          return {...prevState, biography: event.target.value};
         });
+        break;
+      case 'forFansOf':
         break;
       default:
         break;
@@ -51,6 +70,66 @@ class SetUpEpk extends React.Component {
     event.preventDefault();
   }
 
+  removeGenreFromForm(genre) {
+    // See artist_sign_up.py => set_up_epk().
+    this.setState((prevState) => {
+      return {...prevState, genres: prevState.genres.replace(`${genre}/`, "")};
+    })
+  }
+
+  addToGenrePanel(genre) {
+    const funcRemoveFromForm = `removeGenreFromForm("${genre}");`;
+    const funcRemoveFromPage = `document.getElementById("${genre}").remove();`;
+    const funcRemoveGenre = `${funcRemoveFromForm}${funcRemoveFromPage}`;
+    const removeElemButton =
+      `<button type='button' class='btn-close btn-close-white ms-1' aria-label='Close' onclick='${funcRemoveGenre}'></button>`;
+    const genreBadge =
+      `<span class='badge rounded-pill mx-1 mt-3 ps-3 bg-amphere-red text-light font-weight-normal d-flex align-items-center' id='${genre}'>` +
+      genre +
+      removeElemButton +
+      `</span>`;
+    // See artist_sign_up.py => set_up_epk().
+    document.getElementById("genres").value += `${genre}/`;
+    document.getElementById("genrePanel").innerHTML += genreBadge;
+  };
+
+  const removeRelatedArtistFromForm = function (relArt) {
+    // See artist_sign_up.py => set_up_epk().
+    document.getElementById("forFansOf").value =
+      document.getElementById("forFansOf").value.replace(`${relArt}/`, "");
+    document.getElementById("forFansOfDummy").disabled = false;
+  }
+
+  const addToForFansOfPanel = function (relArt) {
+    const funcRemoveFromForm = `removeRelatedArtistFromForm("${relArt}");`;
+    const funcRemoveFromPage = `document.getElementById("${relArt}").remove();`;
+    const funcRemoveRelArt = `${funcRemoveFromForm}${funcRemoveFromPage}`;
+    const removeElemButton =
+      `<button type='button' class='btn-close btn-close-white ms-1' aria-label='Close' onclick='${funcRemoveRelArt}'></button>`;
+    const relArtBadge =
+      `<span class='badge rounded-pill mx-1 mt-3 ps-3 bg-amphere-red text-light font-weight-normal d-flex align-items-center' id='${relArt}'>` +
+      relArt +
+      removeElemButton +
+      `</span>`;
+    // See artist_sign_up.py => set_up_epk().
+    document.getElementById("forFansOf").value += `${relArt}/`;
+    document.getElementById("forFansOfPanel").innerHTML += relArtBadge;
+    document.getElementById("forFansOfDummy").disabled =
+      (document.getElementById("forFansOf").value.match(/\//g) || []).length === 5;
+  };
+
+  const handleForFansOfInput = function (event) {
+    addToForFansOfPanel(event.target.value);
+    event.target.value = "";
+  }
+
+  // Code that runs when page first loads.
+  // See artist_sign_up.py => set_up_epk().
+  "{{genres}}".split("/").filter(s => s).forEach(genre =>
+  addToGenrePanel(genre));
+  "{{for_fans_of}}".split("/").filter(s => s).forEach(relArt =>
+  addToForFansOfPanel(relArt));
+
   /**
    *
    * @return {JSX.Element}
@@ -60,10 +139,9 @@ class SetUpEpk extends React.Component {
       return <Navigate replace to={'/sign-up/connect-socials'}/>;
     }
 
-    const genrePanelItems = this.state.presetGenres.map((presetGenre) =>
+    const presetGenreItems = this.state.presetGenres.map((presetGenre) =>
       <li>
-        <button className="dropdown-item" type="button"
-                onClick={addToGenrePanel(presetGenre)}>
+        <button className="dropdown-item" type="button" name={presetGenre} onClick={this.handleFormChange}>
           {presetGenre}
         </button>
       </li>
@@ -75,10 +153,10 @@ class SetUpEpk extends React.Component {
           <h1>Tell us about your act</h1>
         </div>
         <div className="container-narrow mx-auto">
-          <form>
+          <form onSubmit={this.handleFormSubmit}>
             {/* Prevents implicit submission of the form.
             Effectively disables the "Enter" button. */}
-          <button type="submit" className="d-none" disabled hidden></button>
+          <button type="submit" className="d-none" disabled hidden/>
             {/* Start of visible area of form. */}
           <div className="form-group row my-3">
             <label htmlFor="contactPhone"
@@ -88,7 +166,8 @@ class SetUpEpk extends React.Component {
                      name="contactPhone"
                      placeholder="Enter your business phone number…"
                      value={this.state.contactPhone}
-                     aria-describedby="contactPhoneHelp" required/>
+                     aria-describedby="contactPhoneHelp"
+                     onChange={this.handleFormChange} required/>
           <span id="contactPhoneHelp" className="form-text">
             Must be a UK phone number starting with the number 0.
           </span>
@@ -102,7 +181,8 @@ class SetUpEpk extends React.Component {
                      name="contactEmail"
                      placeholder="Enter your management email…"
                      value={this.state.contactEmail}
-                     aria-describedby="contactEmailHelp" required/>
+                     aria-describedby="contactEmailHelp"
+                     onChange={this.handleFormChange} required/>
           <span id="contactEmailHelp" className="form-text">
             This can be different from the email you used to sign in.
           </span>
@@ -121,15 +201,15 @@ class SetUpEpk extends React.Component {
                 </button>
                 <ul className="dropdown-menu overflow-auto"
                     aria-labelledby="dropdownMenu" style="max-height: 480px;">
-                  {genrePanelItems}
+                  {presetGenreItems}
                 </ul>
               </div>
               <div className="d-flex justify-content-start align-items-center"
                    id="genrePanel">
-                {/* See <script> section below. */}
+                {/* Added dynamically by code. */}
               </div>
               <input type="text" className="form-control d-none" id="genres"
-                     name="genres" value=""/>
+                     name="genres" value="" onChange={this.handleFormChange}/>
             </div>
           </div>
           <div className="form-group row my-3">
@@ -139,7 +219,9 @@ class SetUpEpk extends React.Component {
           <textarea className="form-control amphere-input-textarea"
                     id="biography" name="biography" rows="8" wrap="soft"
                     placeholder="Up to 300 characters…" maxLength="300"
-                    required>{this.state.biography}</textarea>
+                    onChange={this.handleFormChange} required>
+            {this.state.biography}
+          </textarea>
             </div>
           </div>
           <div className="form-group row my-3">
@@ -148,11 +230,11 @@ class SetUpEpk extends React.Component {
             <div className="col-sm-9">
               <input type="text" className="form-control" id="forFansOfDummy"
                      name="forFansOfDummy"
-                     placeholder="Up to 5 artists…" maxLength="3000" value=""
-                     onChange="handleForFansOfInput(event);"/>
+                     placeholder="Up to 5 artists…" value=""
+                     onChange={this.handleFormChange}/>
                 <div className="d-flex justify-content-start align-items-center"
                      id="forFansOfPanel">
-                  {/* See <script> section below. */}
+                  {/* Added dynamically by code. */}
                 </div>
                 <input type="text" className="form-control d-none"
                        id="forFansOf" name="forFansOf" value=""/>
@@ -165,66 +247,6 @@ class SetUpEpk extends React.Component {
             </div>
           </form>
         </div>
-
-        <script>
-          const removeGenreFromForm = function (genre) {
-          // See artist_sign_up.py => set_up_epk().
-          document.getElementById("genres").value = document.getElementById("genres").value.replace(`${genre}/`, "");
-        }
-
-          const addToGenrePanel = function (genre) {
-          const funcRemoveFromForm = `removeGenreFromForm("${genre}");`;
-          const funcRemoveFromPage = `document.getElementById("${genre}").remove();`;
-          const funcRemoveGenre = `${funcRemoveFromForm}${funcRemoveFromPage}`;
-          const removeElemButton =
-          `<button type='button' class='btn-close btn-close-white ms-1' aria-label='Close' onclick='${funcRemoveGenre}'></button>`;
-          const genreBadge =
-          `<span class='badge rounded-pill mx-1 mt-3 ps-3 bg-amphere-red text-light font-weight-normal d-flex align-items-center' id='${genre}'>` +
-          genre +
-          removeElemButton +
-          `</span>`;
-          // See artist_sign_up.py => set_up_epk().
-          document.getElementById("genres").value += `${genre}/`;
-          document.getElementById("genrePanel").innerHTML += genreBadge;
-        };
-
-          const removeRelatedArtistFromForm = function (relArt) {
-          // See artist_sign_up.py => set_up_epk().
-          document.getElementById("forFansOf").value =
-            document.getElementById("forFansOf").value.replace(`${relArt}/`, "");
-          document.getElementById("forFansOfDummy").disabled = false;
-        }
-
-          const addToForFansOfPanel = function (relArt) {
-          const funcRemoveFromForm = `removeRelatedArtistFromForm("${relArt}");`;
-          const funcRemoveFromPage = `document.getElementById("${relArt}").remove();`;
-          const funcRemoveRelArt = `${funcRemoveFromForm}${funcRemoveFromPage}`;
-          const removeElemButton =
-          `<button type='button' class='btn-close btn-close-white ms-1' aria-label='Close' onclick='${funcRemoveRelArt}'></button>`;
-          const relArtBadge =
-          `<span class='badge rounded-pill mx-1 mt-3 ps-3 bg-amphere-red text-light font-weight-normal d-flex align-items-center' id='${relArt}'>` +
-          relArt +
-          removeElemButton +
-          `</span>`;
-          // See artist_sign_up.py => set_up_epk().
-          document.getElementById("forFansOf").value += `${relArt}/`;
-          document.getElementById("forFansOfPanel").innerHTML += relArtBadge;
-          document.getElementById("forFansOfDummy").disabled =
-          (document.getElementById("forFansOf").value.match(/\//g) || []).length === 5;
-        };
-
-          const handleForFansOfInput = function (event) {
-          addToForFansOfPanel(event.target.value);
-          event.target.value = "";
-        }
-
-          // Code that runs when page first loads.
-          // See artist_sign_up.py => set_up_epk().
-          "{{genres}}".split("/").filter(s => s).forEach(genre =>
-          addToGenrePanel(genre));
-          "{{for_fans_of}}".split("/").filter(s => s).forEach(relArt =>
-          addToForFansOfPanel(relArt));
-        </script>
       </div>
     );
   }
