@@ -8,12 +8,14 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import service from '../../models/firebase/service';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import LoadingScreen from '../common/loading-screen';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
 import ProfilePicture from './profile-picture';
 import SetUpEpk from './set-up-epk';
+import ConnectSocials from './connect-socials';
 
 /**
  *
@@ -27,6 +29,7 @@ class ArtistSignUp extends React.Component {
     super(props);
     this.state = {
       isFindingUser: true,
+      signUpProg: 0,
       error: null,
     };
 
@@ -40,6 +43,11 @@ class ArtistSignUp extends React.Component {
     onAuthStateChanged(service.auth, (user) => {
       if (user) {
         this.props.setCurrUser(user);
+        artistSyncHandler.getSyncer(user.uid).then((artistSyncer) => {
+          this.setState((prevState) => {
+            return {...prevState, signUpProg: artistSyncer.signUpProg};
+          });
+        });
       } else {
         this.props.setCurrUser(null);
       }
@@ -70,6 +78,24 @@ class ArtistSignUp extends React.Component {
 
   /**
    *
+   * @param {Number} prog
+   */
+  setSignUpProg(prog) {
+    const user = this.props.getCurrUser();
+    if (user !== null) {
+      artistSyncHandler.getSyncer(user.uid).then((artistSyncer) => {
+        artistSyncer.signUpProg = prog;
+        artistSyncer.push().then(() => {
+          this.setState((prevState) => {
+            return {...prevState, signUpProg: prog};
+          });
+        });
+      });
+    }
+  }
+
+  /**
+   *
    * @return {JSX.Element}
    */
   render() {
@@ -89,17 +115,36 @@ class ArtistSignUp extends React.Component {
             element={
               <ProfilePicture getCurrUser={this.props.getCurrUser}
                 onError={this.onError}/>
-            }/>
+            }
+            onEnter={() => {
+              this.setSignUpProg(1);
+            }}/>
           <Route path='set-up-epk'
             element={
               <SetUpEpk getCurrUser={this.props.getCurrUser}
                 onError={this.onError}/>
-            }/>
-          <Route path='connect-socials' element={<LoadingScreen/>}/>
+            }
+            onEnter={() => {
+              this.setSignUpProg(2);
+            }}/>
+          <Route path='connect-socials'
+            element={
+              <ConnectSocials getCurrUser={this.props.getCurrUser}
+                onError={this.onError}/>
+            }
+            onEnter={() => {
+              this.setSignUpProg(3);
+            }}/>
           <Route path='connect-to-spotify' element={<LoadingScreen/>}/>
           <Route path='connect-to-spotify-complete' element={<LoadingScreen/>}/>
-          <Route path='review' element={<LoadingScreen/>}/>
-          <Route path='thank-you' element={<LoadingScreen/>}/>
+          <Route path='review' element={<LoadingScreen/>}
+            onEnter={() => {
+              this.setSignUpProg(4);
+            }}/>
+          <Route path='thank-you' element={<LoadingScreen/>}
+            onEnter={() => {
+              this.setSignUpProg(5);
+            }}/>
         </Routes>
       );
     }

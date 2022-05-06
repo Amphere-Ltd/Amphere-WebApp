@@ -67,10 +67,10 @@ class SetUpEpk extends React.Component {
     this.state = {
       shouldRedirect: false,
       presetGenres: presetGenres,
-      contactPhone: null,
-      contactEmail: null,
+      contactPhone: '',
+      contactEmail: '',
       genres: [],
-      biography: null,
+      biography: '',
       forFansOf: [],
       forFansOfBuffer: '',
     };
@@ -146,8 +146,8 @@ class SetUpEpk extends React.Component {
     event.preventDefault();
 
     // TODO: Validate input data.
-
-    artistSyncHandler.getSyncer(user.uid).then((artistSyncer) => {
+    const userUid = this.props.getCurrUser().uid;
+    artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
       artistSyncer.getEpkSyncer().then((epkSyncer) => {
         epkSyncer.contactPhone = this.state.contactPhone;
         epkSyncer.contactEmail = this.state.contactEmail;

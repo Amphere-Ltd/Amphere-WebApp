@@ -115,6 +115,8 @@ class Welcome extends React.Component {
    * @return {JSX.Element}
    */
   render() {
+    // TODO: Redirect.
+
     if (this.state.shouldRedirect) {
       return <Navigate replace to={'/sign-up/profile-picture'}/>;
     }
