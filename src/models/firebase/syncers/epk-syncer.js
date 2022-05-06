@@ -82,10 +82,19 @@ class EpkSyncer extends AbstractSyncer {
 const syncers = new Map();
 
 const epkSyncHandler = {
+  /**
+   *
+   * @return {Promise<EpkSyncer>}
+   */
   newSyncer: async () => {
     const docRef = await addDoc(collection(service.db, 'epks'), {});
     return new EpkSyncer(docRef.id);
   },
+  /**
+   *
+   * @param {String} epkID
+   * @return {Promise<EpkSyncer>}
+   */
   getSyncer: async (epkID) => {
     if (syncers.has(epkID)) {
       return syncers.get(epkID);

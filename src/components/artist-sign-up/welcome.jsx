@@ -79,14 +79,16 @@ class Welcome extends React.Component {
     ).then((userCredential) => {
       const user = userCredential.user;
 
-      const artistSyncer = artistSyncHandler.getSyncer(user.uid);
-      artistSyncer.displayName = this.state.displayName;
-      artistSyncer.push();
+      artistSyncHandler.getSyncer(user.uid).then((artistSyncer) => {
+        artistSyncer.displayName = this.state.displayName;
+        artistSyncer.push();
 
-      const epkSyncer = artistSyncer.getEpkSyncer();
-      epkSyncer.displayName = this.state.displayName;
-      epkSyncer.mgtEmail = this.state.mgtEmail;
-      epkSyncer.push();
+        artistSyncer.getEpkSyncer().then((epkSyncer) => {
+          epkSyncer.displayName = this.state.displayName;
+          epkSyncer.mgtEmail = this.state.mgtEmail;
+          epkSyncer.push();
+        });
+      });
 
       this.setState((prevState) => {
         return {...prevState, shouldRedirect: true};

@@ -52,7 +52,7 @@ class ArtistSyncer extends AbstractSyncer {
 
   /**
    *
-   * @return {Promise<unknown>}
+   * @return {Promise<EpkSyncer>}
    */
   async getEpkSyncer() {
     return await epkSyncHandler.getSyncer(this.epkID);
@@ -62,6 +62,11 @@ class ArtistSyncer extends AbstractSyncer {
 const syncers = new Map();
 
 const artistSyncHandler = {
+  /**
+   *
+   * @param {String} firebaseAuthUid
+   * @return {Promise<ArtistSyncer>}
+   */
   getSyncer: async (firebaseAuthUid) => {
     if (syncers.has(firebaseAuthUid)) {
       // We have a locally-saved copy of the ArtistSyncer.

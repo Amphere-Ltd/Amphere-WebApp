@@ -7,6 +7,7 @@ import {
 // eslint-disable-next-line no-unused-vars
 import {User} from 'firebase/auth';
 import ArtistSignUp from './artist-sign-up/artist-sign-up';
+import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import './app.css';
 
