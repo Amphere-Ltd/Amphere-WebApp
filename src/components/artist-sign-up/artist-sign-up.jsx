@@ -1,12 +1,10 @@
 import React from 'react';
 import {
-  Routes,
   Route,
+  Routes,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {
-  onAuthStateChanged,
-} from 'firebase/auth';
+import {onAuthStateChanged} from 'firebase/auth';
 import service from '../../models/firebase/service';
 import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import LoadingScreen from '../common/loading-screen';
@@ -15,7 +13,11 @@ import BotBar from './bot-bar';
 import Welcome from './welcome';
 import ProfilePicture from './profile-picture';
 import SetUpEpk from './set-up-epk';
-import ConnectSocials from './connect-socials';
+import {
+  ConnectSocials,
+  ConnectToSpotify,
+  ConnectToSpotifyComplete,
+} from './connect-socials';
 
 /**
  *
@@ -135,8 +137,10 @@ class ArtistSignUp extends React.Component {
             onEnter={() => {
               this.setSignUpProg(3);
             }}/>
-          <Route path='connect-to-spotify' element={<LoadingScreen/>}/>
-          <Route path='connect-to-spotify-complete' element={<LoadingScreen/>}/>
+          <Route path='connect-to-spotify'
+            element={<ConnectToSpotify/>}/>
+          <Route path='connect-to-spotify-complete'
+            element={<ConnectToSpotifyComplete/>}/>
           <Route path='review' element={<LoadingScreen/>}
             onEnter={() => {
               this.setSignUpProg(4);

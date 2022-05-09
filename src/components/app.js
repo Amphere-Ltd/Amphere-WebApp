@@ -1,14 +1,15 @@
 import React from 'react';
 import {
   Navigate,
-  Routes,
   Route,
+  Routes,
 } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import {User} from 'firebase/auth';
-import ArtistSignUp from './artist-sign-up/artist-sign-up';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
+import authHandler from '../models/spotify/auth-handler';
+import ArtistSignUp from './artist-sign-up/artist-sign-up';
 import './app.css';
 
 /**
@@ -67,15 +68,34 @@ class App extends React.Component {
     return (
       <Routes>
         <Route path={'*'} element={<Navigate replace to={'/sign-up'}/>}/>
-        <Route path={'sign-up/*'} element={
-          <ArtistSignUp
-            getCurrUser={this.getCurrUser} setCurrUser={this.setCurrUser}/>
-        }/>
+        <Route path={'sign-up/*'}
+          element={
+            <ArtistSignUp
+              getCurrUser={this.getCurrUser} setCurrUser={this.setCurrUser}/>
+          }/>
+        <Route path={'callback-spotify'}
+          element={<CallbackSpotify/>}/>
       </Routes>
     );
   }
 }
 
 App.propTypes = {};
+
+/**
+ *
+ */
+class CallbackSpotify extends React.Component {
+  /**
+   *
+   * @return {null}
+   */
+  render() {
+    const queryString = window.location.hash.substring(1);
+    const queryParams = new URLSearchParams(queryString);
+    authHandler.handleCallback(queryParams);
+    return null;
+  }
+}
 
 export default App;

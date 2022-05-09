@@ -1,8 +1,6 @@
-import axios from 'axios';
-
 // Shortcuts to Spotify's API URLS.
 const SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize';
-const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
+// const SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token';
 const SPOTIFY_API_BASE_URL = 'https://api.spotify.com';
 const SPOTIFY_API_VER = 'v1';
 const SPOTIFY_API_URL = `${SPOTIFY_API_BASE_URL}/${SPOTIFY_API_VER}`;
@@ -15,7 +13,7 @@ const CALLBACK_EXT = 'callback-spotify';
 // Additional settings when making the query to Spotify's API.
 const SHOW_DIALOG = true;
 const STATE = '';
-const SCOPE = ' '.join([
+const SCOPE = [
   'user-read-playback-state',
   'user-read-currently-playing',
   'user-follow-read',
@@ -26,12 +24,12 @@ const SCOPE = ' '.join([
   'user-read-email',
   'user-read-private',
   'user-library-read',
-]);
+].join(' ');
 
-let nextRedirectUrl = undefined;
+// let nextRedirectUrl = undefined;
 
 const getAppUrlBase = () => {
-  const testBase = 'http://localhost:5000';
+  const testBase = 'http://localhost:3000';
   const prodBase = 'https://web.amphere.co.uk';
   return process.env.NODE_ENV == 'development' ? testBase : prodBase;
 };
@@ -41,11 +39,10 @@ const getAppUrlCallback = () => {
 };
 
 const authThenRedirectTo = (redirectUrl) => {
-  nextRedirectUrl = redirectUrl;
+  window.localStorage.setItem('nextRedirectUrl', redirectUrl);
 
-  // Step 1: Authorization.
   const queryParams = {
-    response_type: 'code',
+    response_type: 'token',
     redirect_uri: getAppUrlCallback(),
     scope: SCOPE,
     state: STATE,
@@ -59,27 +56,23 @@ const authThenRedirectTo = (redirectUrl) => {
   window.location.replace(`${SPOTIFY_AUTH_URL}/?${queryParamsAsString}`);
 };
 
-const handleCallback = async (queryParams) => {
+const handleCallback = (queryParams) => {
   // Step 4: Requests refresh and access tokens.
-  if (Object.keys(queryParams).length === 0 ||
-      Object.keys(queryParams).length !== 0 &&
-      Object.keys(queryParams).includes('error')) {
+  if (queryParams.get('error')) {
     // TODO: Handle.
     return;
   }
 
-  const configData = require('config.json');
-  const tokenReqData = {
-    grant_type: 'authorization_code',
-    code: queryParams.code,
-    redirect_uri: getAppUrlCallback(),
-    client_id: CLIENT_IDENT,
-    client_secret: configData.spotify.clientSecret,
-  };
-
-  const res = await axios.post(SPOTIFY_TOKEN_URL, tokenReqData);
-
-  // TODO: Save res.data with current user.
-
-  window.location.replace(nextRedirectUrl);
+  window.localStorage.setItem('access_token', queryParams.get('access_token'));
+  window.location.replace(window.localStorage.getItem('nextRedirectUrl'));
 };
+
+const authHandler = {
+  getAppUrlBase: getAppUrlBase,
+  getAppUrlCallback: getAppUrlCallback,
+  authThenRedirectTo: authThenRedirectTo,
+  handleCallback: handleCallback,
+  getSpotifyApiUrl: () => SPOTIFY_API_URL,
+};
+
+export default authHandler;

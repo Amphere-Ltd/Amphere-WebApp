@@ -2,6 +2,9 @@ import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import authHandler from '../../models/spotify/auth-handler';
+import service from '../../models/firebase/service';
+import artistHandler from '../../models/spotify/artist-handler';
 
 /**
  *
@@ -16,6 +19,7 @@ class ConnectSocials extends React.Component {
 
     this.state = {
       shouldRedirect: false,
+      shouldConnectToSpotify: false,
       linkToInstagram: '',
       linkToSpotify: '',
       linkToAppleMusic: '',
@@ -40,7 +44,7 @@ class ConnectSocials extends React.Component {
         break;
       case 'linkToSpotify':
         this.setState((prevState) => {
-          return {...prevState, linkToSpotify: event.target.value};
+          return {...prevState, shouldConnectToSpotify: true};
         });
         break;
       case 'linkToAppleMusic':
@@ -97,6 +101,9 @@ class ConnectSocials extends React.Component {
     if (this.state.shouldRedirect) {
       return <Navigate replace to={'/sign-up/complete'}/>;
     }
+    if (this.state.shouldConnectToSpotify) {
+      return <Navigate replace to={'/sign-up/connect-to-spotify'}/>;
+    }
 
     return (
       <div className={'container'}>
@@ -142,7 +149,7 @@ class ConnectSocials extends React.Component {
                   id="linkToSpotify" name="linkToSpotify"
                   placeholder="Enter your Spotify Artist link"
                   value={this.state.linkToSpotify}
-                  onChange={this.handleFormChange} onFocus=""/>
+                  onFocus={this.handleFormChange}/>
               </div>
             </div>
             <div className="form-group row my-3">
@@ -220,4 +227,54 @@ ConnectSocials.propTypes = {
   onError: PropTypes.func,
 };
 
-export default ConnectSocials;
+/**
+ *
+ */
+class ConnectToSpotify extends React.Component {
+  /**
+   *
+   */
+  componentDidMount() {
+    const redirectUrl =
+      `${authHandler.getAppUrlBase()}/sign-up/connect-to-spotify-complete`;
+    authHandler.authThenRedirectTo(redirectUrl);
+  }
+
+  /**
+   *
+   * @return {null}
+   */
+  render() {
+    return null;
+  }
+}
+
+/**
+ *
+ */
+class ConnectToSpotifyComplete extends React.Component {
+  /**
+   *
+   */
+  componentDidMount() {
+    const userUid = service.auth.currentUser.uid;
+    artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
+      artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
+        artistSyncer.getEpkSyncer().then((epkSyncer) => {
+          epkSyncer.linkToSpotify = linkToSpotify;
+          epkSyncer.push();
+        });
+      });
+    });
+  }
+
+  /**
+   *
+   * @return {JSX.Element}
+   */
+  render() {
+    return <Navigate replace to={'/sign-up/connect-socials'}/>;
+  }
+}
+
+export {ConnectSocials, ConnectToSpotify, ConnectToSpotifyComplete};
