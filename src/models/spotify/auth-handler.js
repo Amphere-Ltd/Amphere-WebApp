@@ -26,8 +26,6 @@ const SCOPE = [
   'user-library-read',
 ].join(' ');
 
-// let nextRedirectUrl = undefined;
-
 const getAppUrlBase = () => {
   const testBase = 'http://localhost:3000';
   const prodBase = 'https://web.amphere.co.uk';
@@ -38,8 +36,24 @@ const getAppUrlCallback = () => {
   return `${getAppUrlBase()}/${CALLBACK_EXT}`;
 };
 
-const authThenRedirectTo = (redirectUrl) => {
-  window.localStorage.setItem('nextRedirectUrl', redirectUrl);
+const getAccessToken = () => {
+  return window.localStorage.getItem('spotifyAccessToken');
+};
+
+const setAccessToken = (token) => {
+  window.localStorage.setItem('spotifyAccessToken', token);
+};
+
+const getRedirectUrl = () => {
+  return window.localStorage.getItem('spotifyRedirectUrl');
+};
+
+const setRedirectUrl = (url) => {
+  window.localStorage.setItem('spotifyRedirectUrl', url);
+};
+
+const authAndSetRedirect = (redirectUrl) => {
+  setRedirectUrl(redirectUrl);
 
   const queryParams = {
     response_type: 'token',
@@ -56,23 +70,27 @@ const authThenRedirectTo = (redirectUrl) => {
   window.location.replace(`${SPOTIFY_AUTH_URL}/?${queryParamsAsString}`);
 };
 
-const handleCallback = (queryParams) => {
+const handleAuthCallback = (queryParams) => {
   // Step 4: Requests refresh and access tokens.
   if (queryParams.get('error')) {
     // TODO: Handle.
     return;
   }
 
-  window.localStorage.setItem('access_token', queryParams.get('access_token'));
+  setAccessToken(queryParams.get('access_token'));
   window.location.replace(window.localStorage.getItem('nextRedirectUrl'));
 };
 
 const authHandler = {
   getAppUrlBase: getAppUrlBase,
   getAppUrlCallback: getAppUrlCallback,
-  authThenRedirectTo: authThenRedirectTo,
-  handleCallback: handleCallback,
+  authAndSetRedirect: authAndSetRedirect,
+  handleAuthCallback: handleAuthCallback,
   getSpotifyApiUrl: () => SPOTIFY_API_URL,
+  getAccessToken: getAccessToken,
+  setAccessToken: setAccessToken,
+  getRedirectUrl: getRedirectUrl,
+  setRedirectUrl: setRedirectUrl,
 };
 
 export default authHandler;

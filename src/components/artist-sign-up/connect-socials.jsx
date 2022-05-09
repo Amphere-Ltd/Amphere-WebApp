@@ -237,7 +237,7 @@ class ConnectToSpotify extends React.Component {
   componentDidMount() {
     const redirectUrl =
       `${authHandler.getAppUrlBase()}/sign-up/connect-to-spotify-complete`;
-    authHandler.authThenRedirectTo(redirectUrl);
+    authHandler.authAndSetRedirect(redirectUrl);
   }
 
   /**

@@ -2,7 +2,7 @@ import axios from 'axios';
 import authHandler from './auth-handler';
 
 const getCurrUserProfile = async () => {
-  const accessToken = window.localStorage.getItem('access_token');
+  const accessToken = authHandler.getAccessToken();
   const res = await axios.get(`${authHandler.getSpotifyApiUrl()}/me`, {
     headers: {
       'Authorization': `Bearer ${accessToken}`,

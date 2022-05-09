@@ -93,7 +93,7 @@ class CallbackSpotify extends React.Component {
   render() {
     const queryString = window.location.hash.substring(1);
     const queryParams = new URLSearchParams(queryString);
-    authHandler.handleCallback(queryParams);
+    authHandler.handleAuthCallback(queryParams);
     return null;
   }
 }
