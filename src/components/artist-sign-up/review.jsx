@@ -31,6 +31,33 @@ class Review extends React.Component {
 
   /**
    *
+   */
+  componentDidMount() {
+    const epkSyncer = this.props.epkSyncer;
+    if (epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          displayName: epkSyncer.displayName,
+          genres: epkSyncer.genres,
+          biography: epkSyncer.biography,
+          linkToInstagram: epkSyncer.linkToInstagram,
+          linkToSpotify: epkSyncer.linkToSpotify,
+          linkToAppleMusic: epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: epkSyncer.linkToSoundCloud,
+          linkToFacebook: epkSyncer.linkToFacebook,
+          contactPhone: epkSyncer.contactPhone,
+          contactEmail: epkSyncer.contactEmail,
+          proPicFiles: [] /* TODO */,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
+  }
+
+  /**
+   *
    * @return {JSX.Element}
    */
   render() {
@@ -136,7 +163,8 @@ class Review extends React.Component {
 }
 
 Review.propTypes = {
-  getCurrUser: PropTypes.func,
+  artistSyncer: PropTypes.any,
+  epkSyncer: PropTypes.any,
   onError: PropTypes.func,
 };
 

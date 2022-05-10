@@ -1,9 +1,7 @@
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import authHandler from '../../models/spotify/auth-handler';
-import service from '../../models/firebase/service';
 import artistHandler from '../../models/spotify/artist-handler';
 
 /**
@@ -29,6 +27,31 @@ class ConnectSocials extends React.Component {
 
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.epkSyncer === prevProps.epkSyncer) return;
+
+    if (this.props.epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          linkToInstagram: this.props.epkSyncer.linkToInstagram,
+          linkToSpotify: this.props.epkSyncer.linkToSpotify,
+          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
+          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
   }
 
   /**
@@ -76,20 +99,16 @@ class ConnectSocials extends React.Component {
 
     // TODO: Validate input data.
 
-    const userUid = this.props.getCurrUser().uid;
-    artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
-      artistSyncer.getEpkSyncer().then((epkSyncer) => {
-        epkSyncer.linkToInstagram = this.state.linkToInstagram;
-        epkSyncer.linkToSpotify = this.state.linkToSpotify;
-        epkSyncer.linkToAppleMusic = this.state.linkToAppleMusic;
-        epkSyncer.linkToSoundCloud = this.state.linkToSoundCloud;
-        epkSyncer.linkToFacebook = this.state.linkToFacebook;
-        epkSyncer.push();
+    const epkSyncer = this.props.epkSyncer;
+    epkSyncer.linkToInstagram = this.state.linkToInstagram;
+    epkSyncer.linkToSpotify = this.state.linkToSpotify;
+    epkSyncer.linkToAppleMusic = this.state.linkToAppleMusic;
+    epkSyncer.linkToSoundCloud = this.state.linkToSoundCloud;
+    epkSyncer.linkToFacebook = this.state.linkToFacebook;
+    epkSyncer.push().then(() => {
+      this.setState((prevState) => {
+        return {...prevState, shouldRedirect: true};
       });
-    });
-
-    this.setState((prevState) => {
-      return {...prevState, shouldRedirect: true};
     });
   }
 
@@ -111,7 +130,7 @@ class ConnectSocials extends React.Component {
           <h1>Connect your socials</h1>
         </div>
         <div className="container-narrow mx-auto">
-          <form>
+          <form onSubmit={this.handleFormSubmit}>
             <div className="form-group row my-3">
               <label htmlFor="linkToInstagram"
                 className="col-sm-3 col-form-label">
@@ -145,7 +164,8 @@ class ConnectSocials extends React.Component {
                 </div>
               </label>
               <div className="col-sm-9">
-                <input type="text" className="form-control" role="button"
+                <input type="text" className="form-control-plaintext"
+                  readOnly role="button"
                   id="linkToSpotify" name="linkToSpotify"
                   placeholder="Enter your Spotify Artist link"
                   value={this.state.linkToSpotify}
@@ -223,7 +243,8 @@ class ConnectSocials extends React.Component {
 }
 
 ConnectSocials.propTypes = {
-  getCurrUser: PropTypes.func,
+  artistSyncer: PropTypes.any,
+  epkSyncer: PropTypes.any,
   onError: PropTypes.func,
 };
 
@@ -255,17 +276,29 @@ class ConnectToSpotify extends React.Component {
 class ConnectToSpotifyComplete extends React.Component {
   /**
    *
+   * @param {ConnectToSpotifyComplete.propTypes} props
    */
-  componentDidMount() {
-    const userUid = service.auth.currentUser.uid;
-    artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
-      artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
-        artistSyncer.getEpkSyncer().then((epkSyncer) => {
-          epkSyncer.linkToSpotify = linkToSpotify;
-          epkSyncer.push();
+  constructor(props) {
+    super(props);
+    this.state = {shouldRedirect: false};
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.epkSyncer === prevProps.epkSyncer) return;
+    if (this.props.epkSyncer) {
+      artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
+        this.props.epkSyncer.linkToSpotify = linkToSpotify;
+        this.props.epkSyncer.push().then(() => {
+          this.setState({shouldRedirect: true});
         });
       });
-    });
+    }
   }
 
   /**
@@ -273,8 +306,16 @@ class ConnectToSpotifyComplete extends React.Component {
    * @return {JSX.Element}
    */
   render() {
-    return <Navigate replace to={'/sign-up/connect-socials'}/>;
+    if (this.state.shouldRedirect) {
+      return <Navigate replace to={'/sign-up/connect-socials'}/>;
+    } else {
+      return null;
+    }
   }
 }
+
+ConnectToSpotifyComplete.propTypes = {
+  epkSyncer: PropTypes.any,
+};
 
 export {ConnectSocials, ConnectToSpotify, ConnectToSpotifyComplete};

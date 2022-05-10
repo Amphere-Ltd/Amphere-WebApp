@@ -5,12 +5,13 @@ import {
   Routes,
 } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import {User} from 'firebase/auth';
+import {onAuthStateChanged, User} from 'firebase/auth';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import authHandler from '../models/spotify/auth-handler';
 import ArtistSignUp from './artist-sign-up/artist-sign-up';
 import './app.css';
+import service from '../models/firebase/service';
 
 /**
  *
@@ -31,34 +32,12 @@ class App extends React.Component {
    *
    */
   componentDidMount() {
-  }
-
-  /**
-   *
-   * @param {Object} prevProps
-   * @param {Object} prevState
-   * @param {Object} snapshot
-   */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-  }
-
-  /**
-   *
-   * @return {null|User}
-   */
-  getCurrUser = () => {
-    return this.state.currUser;
-  };
-
-  /**
-   *
-   * @param {null|User} user
-   */
-  setCurrUser = (user) => {
-    this.setState((prevState) => {
-      return {...prevState, currUser: user};
+    onAuthStateChanged(service.auth, (user) => {
+      this.setState((prevState) => {
+        return {...prevState, currUser: user};
+      });
     });
-  };
+  }
 
   /**
    *
@@ -70,8 +49,7 @@ class App extends React.Component {
         <Route path={'*'} element={<Navigate replace to={'/sign-up'}/>}/>
         <Route path={'sign-up/*'}
           element={
-            <ArtistSignUp
-              getCurrUser={this.getCurrUser} setCurrUser={this.setCurrUser}/>
+            <ArtistSignUp currUser={this.state.currUser}/>
           }/>
         <Route path={'callback-spotify'}
           element={<CallbackSpotify/>}/>

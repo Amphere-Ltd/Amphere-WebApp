@@ -40,7 +40,7 @@ class AbstractSyncer {
     const docSnap = await getDoc(ref);
 
     if (docSnap.exists()) {
-      return docSnap.data;
+      return docSnap.data();
     }
 
     return null;

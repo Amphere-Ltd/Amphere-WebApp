@@ -6,8 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import service from '../../models/firebase/service';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -72,27 +72,32 @@ class Welcome extends React.Component {
 
     // TODO: Validate regex.
 
+    const setSyncers = (userUid) => {
+      artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
+        artistSyncer.displayName = this.state.displayName;
+
+        artistSyncer.push().then(() => {
+          artistSyncer.getEpkSyncer().then((epkSyncer) => {
+            epkSyncer.displayName = this.state.displayName;
+            epkSyncer.mgtEmail = this.state.mgtEmail;
+
+            epkSyncer.push().then(() => {
+              this.setState((prevState) => {
+                return {...prevState, shouldRedirect: true};
+              });
+            });
+          });
+        });
+      });
+    };
+
     createUserWithEmailAndPassword(
         service.auth,
         this.state.mgtEmail,
         this.state.password,
     ).then((userCredential) => {
       const user = userCredential.user;
-
-      artistSyncHandler.getSyncer(user.uid).then((artistSyncer) => {
-        artistSyncer.displayName = this.state.displayName;
-        artistSyncer.push();
-
-        artistSyncer.getEpkSyncer().then((epkSyncer) => {
-          epkSyncer.displayName = this.state.displayName;
-          epkSyncer.mgtEmail = this.state.mgtEmail;
-          epkSyncer.push();
-        });
-      });
-
-      this.setState((prevState) => {
-        return {...prevState, shouldRedirect: true};
-      });
+      setSyncers(user.uid);
     }).catch((error) => {
       if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
         signInWithEmailAndPassword(
@@ -100,9 +105,7 @@ class Welcome extends React.Component {
             this.state.mgtEmail,
             this.state.password,
         ).then((userCredential) => {
-          this.setState((prevState) => {
-            return {...prevState, shouldRedirect: true};
-          });
+          setSyncers(userCredential.user.uid);
         }).catch((error) => {
           this.props.onError(error.message);
         });
@@ -179,6 +182,8 @@ class Welcome extends React.Component {
 }
 
 Welcome.propTypes = {
+  artistSyncer: PropTypes.any,
+  epkSyncer: PropTypes.any,
   onError: PropTypes.func,
 };
 

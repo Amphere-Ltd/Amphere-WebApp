@@ -1,7 +1,6 @@
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -14,59 +13,8 @@ class SetUpEpk extends React.Component {
   constructor(props) {
     super(props);
 
-    const presetGenres = [
-      'Alternative Rock',
-      'Ambient',
-      'Audiobooks',
-      'Blues',
-      'Business',
-      'Classical',
-      'Comedy',
-      'Country',
-      'Dance',
-      'Dancehall',
-      'Deep House',
-      'Disco',
-      'Drum and Bass',
-      'Dubstep',
-      'EDM',
-      'Electronic',
-      'Entertainment',
-      'Hip Hop',
-      'House',
-      'Indie',
-      'Jazz',
-      'Latin',
-      'Learning',
-      'Metal',
-      'Piano',
-      'Pop',
-      'Politics',
-      'Rap',
-      'RnB',
-      'Reggae',
-      'Reggaeton',
-      'Religion',
-      'Rock',
-      'Science',
-      'Singer-Songwriter',
-      'Soul',
-      'Soundtrack',
-      'Sports',
-      'Storytelling',
-      'Techno',
-      'Technology',
-      'Trance',
-      'Trap',
-      'Trending Audio',
-      'Trending Music',
-      'Trip Hop',
-      'World',
-    ];
-
     this.state = {
       shouldRedirect: false,
-      presetGenres: presetGenres,
       contactPhone: '',
       contactEmail: '',
       genres: [],
@@ -80,6 +28,31 @@ class SetUpEpk extends React.Component {
     this.removeGenreFromForm = this.removeGenreFromForm.bind(this);
     this.removeRelatedArtistFromForm =
       this.removeRelatedArtistFromForm.bind(this);
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.epkSyncer === prevProps.epkSyncer) return;
+
+    if (this.props.epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          contactPhone: this.props.epkSyncer.contactPhone,
+          contactEmail: this.props.epkSyncer.contactEmail,
+          genres: this.props.epkSyncer.genres,
+          biography: this.props.epkSyncer.biography,
+          forFansOf: this.props.epkSyncer.forFansOf,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
   }
 
   /**
@@ -146,20 +119,17 @@ class SetUpEpk extends React.Component {
     event.preventDefault();
 
     // TODO: Validate input data.
-    const userUid = this.props.getCurrUser().uid;
-    artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
-      artistSyncer.getEpkSyncer().then((epkSyncer) => {
-        epkSyncer.contactPhone = this.state.contactPhone;
-        epkSyncer.contactEmail = this.state.contactEmail;
-        epkSyncer.genres = this.state.genres;
-        epkSyncer.biography = this.state.biography;
-        epkSyncer.forFansOf = this.state.forFansOf;
-        epkSyncer.push();
-      });
-    });
 
-    this.setState((prevState) => {
-      return {...prevState, shouldRedirect: true};
+    const epkSyncer = this.props.epkSyncer;
+    epkSyncer.contactPhone = this.state.contactPhone;
+    epkSyncer.contactEmail = this.state.contactEmail;
+    epkSyncer.genres = this.state.genres;
+    epkSyncer.biography = this.state.biography;
+    epkSyncer.forFansOf = this.state.forFansOf;
+    epkSyncer.push().then(() => {
+      this.setState((prevState) => {
+        return {...prevState, shouldRedirect: true};
+      });
     });
   }
 
@@ -200,7 +170,56 @@ class SetUpEpk extends React.Component {
       return <Navigate replace to={'/sign-up/connect-socials'}/>;
     }
 
-    const presetGenreItems = this.state.presetGenres.map((presetGenre) =>
+    const presetGenres = [
+      'Alternative Rock',
+      'Ambient',
+      'Audiobooks',
+      'Blues',
+      'Business',
+      'Classical',
+      'Comedy',
+      'Country',
+      'Dance',
+      'Dancehall',
+      'Deep House',
+      'Disco',
+      'Drum and Bass',
+      'Dubstep',
+      'EDM',
+      'Electronic',
+      'Entertainment',
+      'Hip Hop',
+      'House',
+      'Indie',
+      'Jazz',
+      'Latin',
+      'Learning',
+      'Metal',
+      'Piano',
+      'Pop',
+      'Politics',
+      'Rap',
+      'RnB',
+      'Reggae',
+      'Reggaeton',
+      'Religion',
+      'Rock',
+      'Science',
+      'Singer-Songwriter',
+      'Soul',
+      'Soundtrack',
+      'Sports',
+      'Storytelling',
+      'Techno',
+      'Technology',
+      'Trance',
+      'Trap',
+      'Trending Audio',
+      'Trending Music',
+      'Trip Hop',
+      'World',
+    ];
+    const presetGenreItems = presetGenres.map((presetGenre) =>
       <li key={presetGenre}>
         <button className="dropdown-item" type="button" name={presetGenre}
           onClick={this.handleFormChange}>
@@ -303,9 +322,8 @@ class SetUpEpk extends React.Component {
                 <textarea className="form-control amphere-input-textarea"
                   id="biography" name="biography" rows="8" wrap="soft"
                   placeholder="Up to 300 characters…" maxLength="300"
-                  onChange={this.handleFormChange} required>
-                  {this.state.biography}
-                </textarea>
+                  value={this.state.biography} onChange={this.handleFormChange}
+                  required/>
               </div>
             </div>
             <div className="form-group row my-3">
@@ -337,7 +355,8 @@ class SetUpEpk extends React.Component {
 }
 
 SetUpEpk.propTypes = {
-  getCurrUser: PropTypes.func,
+  artistSyncer: PropTypes.any,
+  epkSyncer: PropTypes.any,
   onError: PropTypes.func,
 };
 

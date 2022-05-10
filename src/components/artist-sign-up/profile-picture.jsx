@@ -3,7 +3,6 @@ import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {ref, uploadBytes} from 'firebase/storage';
 import service from '../../models/firebase/service';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import './profile-picture.css';
 
 /**
@@ -89,18 +88,16 @@ class ProfilePicture extends React.Component {
       proPicFilenames.push(newFileName);
 
       // TODO: Reusable code.
-      const userUid = this.props.getCurrUser().uid;
-      const uploadPath = `epkMedia/${userUid}/${newFileName}`;
+      const artistSyncer = this.props.artistSyncer;
+      const artistUid = artistSyncer.firebaseDocName;
+      const uploadPath = `epkMedia/${artistUid}/${newFileName}`;
       const storageRef = ref(service.storage, uploadPath);
       uploadBytes(storageRef, picture).then((snapshot) => {
         uploadCount += 1;
 
-        artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
-          artistSyncer.getEpkSyncer().then((epkSyncer) => {
-            epkSyncer.proPicFilenames = proPicFilenames;
-            epkSyncer.push();
-          });
-        });
+        const epkSyncer = this.props.epkSyncer;
+        epkSyncer.proPicFilenames = proPicFilenames;
+        epkSyncer.push();
 
         if (uploadCount === proPicFilenames.length) {
           // TODO: Messy.
@@ -273,7 +270,8 @@ class ProfilePicture extends React.Component {
 }
 
 ProfilePicture.propTypes = {
-  getCurrUser: PropTypes.func,
+  artistSyncer: PropTypes.any,
+  epkSyncer: PropTypes.any,
   onError: PropTypes.func,
 };
 
