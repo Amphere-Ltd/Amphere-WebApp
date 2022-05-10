@@ -99,7 +99,7 @@ class ConnectSocials extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/complete'}/>;
+      return <Navigate replace to={'/sign-up/review'}/>;
     }
     if (this.state.shouldConnectToSpotify) {
       return <Navigate replace to={'/sign-up/connect-to-spotify'}/>;
