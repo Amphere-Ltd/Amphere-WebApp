@@ -41,13 +41,13 @@ class ArtistSyncer extends AbstractSyncer {
     );
 
     // Remember to add any new fields that need syncing here.
-    this.dateOfBirth = '\\null';
-    this.displayName = '\\null';
-    this.epkID = '\\null';
-    this.gender = '\\null';
-    this.isIndividual = '\\null';
-    this.signUpProg = '\\null';
-    this.username = '\\null';
+    this.dateOfBirth = '';
+    this.displayName = '';
+    this.epkID = null;
+    this.gender = '';
+    this.isIndividual = true;
+    this.signUpProg = '';
+    this.username = '';
   }
 
   /**
@@ -78,10 +78,10 @@ const artistSyncHandler = {
     const remoteSyncer = await syncer.pullInstanceOfSelf();
     const latestSyncer = remoteSyncer === null ? syncer : remoteSyncer;
 
-    if (remoteSyncer === null) {
+    if (latestSyncer.epkID === undefined || latestSyncer.epkID === null) {
       // This is a newly-created Syncer.
       const epkSyncer = await epkSyncHandler.newSyncer();
-      latestSyncer.epkID = epkSyncer.firebaseDocName;
+      latestSyncer.epkID = epkSyncer.firestoreDocName;
       await latestSyncer.push();
     }
 

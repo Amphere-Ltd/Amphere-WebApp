@@ -63,19 +63,19 @@ class EpkSyncer extends AbstractSyncer {
 
     // Remember to add any new fields that need syncing here.
     this.accessToSpotify = {};
-    this.biography = '\\null';
-    this.contactEmail = '\\null';
-    this.contactPhone = '\\null';
-    this.displayName = '\\null';
+    this.biography = '';
+    this.contactEmail = '';
+    this.contactPhone = '';
+    this.displayName = '';
     this.forFansOf = [];
     this.genres = [];
-    this.isIndividual = '\\null';
-    this.linkToAppleMusic = '\\null';
-    this.linkToFacebook = '\\null';
-    this.linkToInstagram = '\\null';
-    this.linkToSpotify = '\\null';
-    this.linkToSoundCloud = '\\null';
-    this.proPicFilenames = '\\null';
+    this.isIndividual = '';
+    this.linkToAppleMusic = '';
+    this.linkToFacebook = '';
+    this.linkToInstagram = '';
+    this.linkToSpotify = '';
+    this.linkToSoundCloud = '';
+    this.proPicFilenames = '';
   }
 }
 
