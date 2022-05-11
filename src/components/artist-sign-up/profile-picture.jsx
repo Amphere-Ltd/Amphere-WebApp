@@ -29,6 +29,16 @@ class ProfilePicture extends React.Component {
 
   /**
    *
+   */
+  componentDidMount() {
+    if (this.props.artistSyncer) {
+      this.props.artistSyncer.signUpProg = 1;
+      this.props.artistSyncer.push();
+    }
+  }
+
+  /**
+   *
    * @param {Event} event
    */
   handleFormChange(event) {

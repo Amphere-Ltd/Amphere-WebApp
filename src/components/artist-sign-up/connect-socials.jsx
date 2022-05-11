@@ -31,13 +31,37 @@ class ConnectSocials extends React.Component {
 
   /**
    *
+   */
+  componentDidMount() {
+    if (this.props.artistSyncer) {
+      this.props.artistSyncer.signUpProg = 3;
+      this.props.artistSyncer.push();
+    }
+
+    if (this.props.epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          linkToInstagram: this.props.epkSyncer.linkToInstagram,
+          linkToSpotify: this.props.epkSyncer.linkToSpotify,
+          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
+          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
+  }
+
+  /**
+   *
    * @param {Object} prevProps
    * @param {Object} prevState
    * @param {Object} snapshot
    */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.epkSyncer === prevProps.epkSyncer) return;
-
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {

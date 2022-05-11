@@ -28,12 +28,19 @@ class Review extends React.Component {
       contactEmail: '',
       proPicFiles: [],
     };
+
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   /**
    *
    */
   componentDidMount() {
+    if (this.props.artistSyncer) {
+      this.props.artistSyncer.signUpProg = 4;
+      this.props.artistSyncer.push();
+    }
+
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {
@@ -84,6 +91,17 @@ class Review extends React.Component {
     } else {
       this.props.onError('Connection with database has been lost.');
     }
+  }
+
+  /**
+   *
+   * @param {Event} event
+   */
+  handleFormSubmit(event) {
+    event.preventDefault();
+    this.setState((prevState) => {
+      return {...prevState, shouldRedirect: true};
+    });
   }
 
   /**
@@ -194,7 +212,7 @@ class Review extends React.Component {
             </div>
           </div>
         </div>
-        <form className="my-5">
+        <form className="my-5" onSubmit={this.handleFormSubmit}>
           <input type="submit" name="action" value="S U B M I T"/>
         </form>
       </div>

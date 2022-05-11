@@ -34,6 +34,11 @@ class SetUpEpk extends React.Component {
    *
    */
   componentDidMount() {
+    if (this.props.artistSyncer) {
+      this.props.artistSyncer.signUpProg = 2;
+      this.props.artistSyncer.push();
+    }
+
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {

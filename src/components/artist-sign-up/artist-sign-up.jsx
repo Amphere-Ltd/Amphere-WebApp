@@ -1,11 +1,11 @@
 import React from 'react';
 import {
+  Navigate,
   Route,
   Routes,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
-import LoadingScreen from '../common/loading-screen';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
@@ -17,6 +17,7 @@ import {
   ConnectToSpotifyComplete,
 } from './connect-socials';
 import Review from './review';
+import Complete from './complete';
 
 /**
  *
@@ -29,6 +30,7 @@ class ArtistSignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      didAutoRedirect: false,
       artistSyncer: null,
       epkSyncer: null,
       error: null,
@@ -41,6 +43,20 @@ class ArtistSignUp extends React.Component {
    *
    */
   componentDidMount() {
+    if (this.props.currUser) {
+      artistSyncHandler.getSyncer(this.props.currUser.uid)
+          .then((artistSyncer) => {
+            artistSyncer.getEpkSyncer().then((epkSyncer) => {
+              this.setState((prevState) => {
+                return {
+                  ...prevState,
+                  artistSyncer: artistSyncer,
+                  epkSyncer: epkSyncer,
+                };
+              });
+            });
+          });
+    }
   }
 
   /**
@@ -51,7 +67,6 @@ class ArtistSignUp extends React.Component {
    */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.currUser === prevProps.currUser) return;
-
     if (this.props.currUser) {
       artistSyncHandler.getSyncer(this.props.currUser.uid)
           .then((artistSyncer) => {
@@ -127,9 +142,46 @@ class ArtistSignUp extends React.Component {
               epkSyncer={this.state.epkSyncer}
               onError={this.onError}/>
           }/>
-        <Route path='thank-you' element={<LoadingScreen/>}/>
+        <Route path='thank-you'
+          element={
+            <Complete
+              artistSyncer={this.state.artistSyncer}
+              epkSyncer={this.state.epkSyncer}/>
+          }/>
       </Routes>
     );
+
+    const redirectOverride = () => {
+      if (this.state.didAutoRedirect) return null;
+      if (this.state.artistSyncer === null) return null;
+      if (this.state.artistSyncer.signUpProg === 0) return null;
+
+      let content;
+      switch (this.state.artistSyncer.signUpProg) {
+        case 1:
+          content = <Navigate replace to={'/sign-up/profile-picture'}/>;
+          break;
+        case 2:
+          content = <Navigate replace to={'/sign-up/set-up-epk'}/>;
+          break;
+        case 3:
+          content = <Navigate replace to={'/sign-up/connect-socials'}/>;
+          break;
+        case 4:
+          content = <Navigate replace to={'/sign-up/review'}/>;
+          break;
+        case 5:
+          content = <Navigate replace to={'/sign-up/thank-you'}/>;
+          break;
+        default:
+          content = null;
+      }
+
+      this.setState((prevState) => {
+        return {...prevState, didAutoRedirect: true};
+      });
+      return content;
+    };
 
     return (
       <div className="container">
@@ -141,6 +193,7 @@ class ArtistSignUp extends React.Component {
           </div>
         }
         {content}
+        {redirectOverride()}
         <BotBar/>
       </div>
     );
