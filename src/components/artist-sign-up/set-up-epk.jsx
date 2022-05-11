@@ -32,13 +32,32 @@ class SetUpEpk extends React.Component {
 
   /**
    *
+   */
+  componentDidMount() {
+    if (this.props.epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          contactPhone: this.props.epkSyncer.contactPhone,
+          contactEmail: this.props.epkSyncer.contactEmail,
+          genres: this.props.epkSyncer.genres,
+          biography: this.props.epkSyncer.biography,
+          forFansOf: this.props.epkSyncer.forFansOf,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
+  }
+
+  /**
+   *
    * @param {Object} prevProps
    * @param {Object} prevState
    * @param {Object} snapshot
    */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.epkSyncer === prevProps.epkSyncer) return;
-
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {

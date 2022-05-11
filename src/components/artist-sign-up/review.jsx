@@ -1,6 +1,7 @@
 import React from 'react';
-import {Navigate} from 'react-router-dom';
+import {Link, Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import './review.css';
 
 /**
  *
@@ -33,21 +34,50 @@ class Review extends React.Component {
    *
    */
   componentDidMount() {
-    const epkSyncer = this.props.epkSyncer;
-    if (epkSyncer) {
+    if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {
           ...prevState,
-          displayName: epkSyncer.displayName,
-          genres: epkSyncer.genres,
-          biography: epkSyncer.biography,
-          linkToInstagram: epkSyncer.linkToInstagram,
-          linkToSpotify: epkSyncer.linkToSpotify,
-          linkToAppleMusic: epkSyncer.linkToAppleMusic,
-          linkToSoundCloud: epkSyncer.linkToSoundCloud,
-          linkToFacebook: epkSyncer.linkToFacebook,
-          contactPhone: epkSyncer.contactPhone,
-          contactEmail: epkSyncer.contactEmail,
+          displayName: this.props.epkSyncer.displayName,
+          genres: this.props.epkSyncer.genres,
+          biography: this.props.epkSyncer.biography,
+          linkToInstagram: this.props.epkSyncer.linkToInstagram,
+          linkToSpotify: this.props.epkSyncer.linkToSpotify,
+          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
+          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+          contactPhone: this.props.epkSyncer.contactPhone,
+          contactEmail: this.props.epkSyncer.contactEmail,
+          proPicFiles: [] /* TODO */,
+        };
+      });
+    } else {
+      this.props.onError('Connection with database has been lost.');
+    }
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.epkSyncer === prevProps.epkSyncer) return;
+    if (this.props.epkSyncer) {
+      this.setState((prevState) => {
+        return {
+          ...prevState,
+          displayName: this.props.epkSyncer.displayName,
+          genres: this.props.epkSyncer.genres,
+          biography: this.props.epkSyncer.biography,
+          linkToInstagram: this.props.epkSyncer.linkToInstagram,
+          linkToSpotify: this.props.epkSyncer.linkToSpotify,
+          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
+          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+          contactPhone: this.props.epkSyncer.contactPhone,
+          contactEmail: this.props.epkSyncer.contactEmail,
           proPicFiles: [] /* TODO */,
         };
       });
@@ -72,16 +102,19 @@ class Review extends React.Component {
       linkToSoundCloud: 'icon-soundcloud-dark.png',
       linkToFacebook: 'icon-facebook-dark',
     };
-    const socialsConnectedIcons = socialLinksToIcons
-        .filter((key, _) => {
+    const socialsConnectedIcons = Object.keys(socialLinksToIcons)
+        .filter((key) => {
           return this.state[key] !== '' && this.state[key] !== '\\null';
         })
-        .map((key, val) => {
-          return <img key={key} src={`../../assets/${val}`}
+        .map((key) => {
+          const val = socialLinksToIcons[key];
+          return <img key={key} src={require(`../../assets/${val}`)}
             alt="Error" className="m-1" width="64" height="64"/>;
         });
+
     const proPicImages = this.state.proPicFiles.map((file) => {
-      return <img key={file.name} src={`data:image/jpeg;base64,${file}`}
+      return <img key={file.name}
+        src={`data:image/jpeg;base64,${file}`}
         alt="Unknown Item" className="m-1 rounded" height="180"/>;
     });
 
@@ -93,64 +126,71 @@ class Review extends React.Component {
         <div className="container text-left text-dark">
           <div className="row g-3">
             <div className="col-xl-6 col-md-12">
-              <div className="h-65 p-3 bg-light rounded zoomable">
-                <h2>Details</h2>
-                <form>
-                  <div className="form-group my-1">
-                    <label htmlFor="genres">Genres:</label>
-                    <input type="text" readOnly
-                      className="form-control-plaintext" id="genres"
-                      name="genres" value={this.state.genres.join(', ')}/>
-                  </div>
-                  <div className="form-group my-1">
-                    <label htmlFor="biography">Description:</label>
-                    <textarea className="form-control-plaintext
+              <Link to={'/sign-up/set-up-epk'}>
+                <div className="h-65 p-3 bg-light rounded zoomable">
+                  <h2>Details</h2>
+                  <form>
+                    <div className="form-group my-1">
+                      <label htmlFor="genres">Genres:</label>
+                      <input type="text" readOnly
+                        className="form-control-plaintext" id="genres"
+                        name="genres" value={this.state.genres.join(', ')}/>
+                    </div>
+                    <div className="form-group my-1">
+                      <label htmlFor="biography">Description:</label>
+                      <textarea className="form-control-plaintext
                     amphere-input-textarea" id="biography" name="biography"
-                    rows="6" wrap="soft" maxLength="300" readOnly>
-                      {this.state.biography}
-                    </textarea>
-                  </div>
-                </form>
-              </div>
-              <div className="h-35 mt-3 p-3 bg-light rounded zoomable">
-                <h2>Socials Connected</h2>
-                <div className="d-flex justify-content-start overflow-auto">
-                  {socialsConnectedIcons}
+                      rows="6" wrap="soft" maxLength="300"
+                      value={this.state.biography} readOnly/>
+                    </div>
+                  </form>
                 </div>
-              </div>
+              </Link>
+              <Link to={'/sign-up/connect-socials'}>
+                <div className="h-35 mt-3 p-3 bg-light rounded zoomable">
+                  <h2>Socials Connected</h2>
+                  <div className="d-flex justify-content-start overflow-auto">
+                    {socialsConnectedIcons}
+                  </div>
+                </div>
+              </Link>
             </div>
             <div className="col-xl-6 col-md-12">
-              <div className="h-45 p-3 bg-light rounded zoomable">
-                <h2>Contact Details</h2>
-                <form>
-                  <div className="form-group row">
-                    <label htmlFor="contactPhone"
-                      className="col-sm-3 col-form-label">
+              <Link to={'/sign-up/set-up-epk'}>
+                <div className="h-45 p-3 bg-light rounded zoomable">
+                  <h2>Contact Details</h2>
+                  <form>
+                    <div className="form-group row">
+                      <label htmlFor="contactPhone"
+                        className="col-sm-3 col-form-label">
                       Phone:
-                    </label>
-                    <div className="col-sm-9">
-                      <input type="text" readOnly
-                        className="form-control-plaintext" id="contactPhone"
-                        name="contactPhone" value={this.state.contactPhone}/>
-                    </div>
-                    <label htmlFor="contactEmail"
-                      className="col-sm-3 col-form-label">
+                      </label>
+                      <div className="col-sm-9">
+                        <input type="text" readOnly
+                          className="form-control-plaintext" id="contactPhone"
+                          name="contactPhone" value={this.state.contactPhone}/>
+                      </div>
+                      <label htmlFor="contactEmail"
+                        className="col-sm-3 col-form-label">
                       Mgt. Email:
-                    </label>
-                    <div className="col-sm-9">
-                      <input type="text" readOnly
-                        className="form-control-plaintext" id="contactEmail"
-                        name="contactEmail" value={this.state.contactEmail}/>
+                      </label>
+                      <div className="col-sm-9">
+                        <input type="text" readOnly
+                          className="form-control-plaintext" id="contactEmail"
+                          name="contactEmail" value={this.state.contactEmail}/>
+                      </div>
                     </div>
-                  </div>
-                </form>
-              </div>
-              <div className="h-55 mt-3 p-3 bg-light rounded zoomable">
-                <h2>Photos</h2>
-                <div className="d-flex justify-content-start overflow-auto">
-                  {proPicImages}
+                  </form>
                 </div>
-              </div>
+              </Link>
+              <Link to={'/sign-up/profile-picture'}>
+                <div className="h-55 mt-3 p-3 bg-light rounded zoomable">
+                  <h2>Photos</h2>
+                  <div className="d-flex justify-content-start overflow-auto">
+                    {proPicImages}
+                  </div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>

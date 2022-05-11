@@ -285,6 +285,20 @@ class ConnectToSpotifyComplete extends React.Component {
 
   /**
    *
+   */
+  componentDidMount() {
+    if (this.props.epkSyncer) {
+      artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
+        this.props.epkSyncer.linkToSpotify = linkToSpotify;
+        this.props.epkSyncer.push().then(() => {
+          this.setState({shouldRedirect: true});
+        });
+      });
+    }
+  }
+
+  /**
+   *
    * @param {Object} prevProps
    * @param {Object} prevState
    * @param {Object} snapshot
