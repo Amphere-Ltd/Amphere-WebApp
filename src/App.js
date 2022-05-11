@@ -8,10 +8,10 @@ import {
 import {onAuthStateChanged, User} from 'firebase/auth';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import authHandler from '../models/spotify/auth-handler';
-import ArtistSignUp from './artist-sign-up/artist-sign-up';
-import './app.css';
-import service from '../models/firebase/service';
+import authHandler from './models/spotify/auth-handler';
+import ArtistSignUp from './components/artist-sign-up/artist-sign-up';
+import './App.css';
+import service from './models/firebase/service';
 
 /**
  *
