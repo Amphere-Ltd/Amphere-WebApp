@@ -17,10 +17,7 @@ class Complete extends React.Component {
    *
    */
   componentDidMount() {
-    if (this.props.artistSyncer) {
-      this.props.artistSyncer.signUpProg = 5;
-      this.props.artistSyncer.push();
-    }
+    this.props.onFlowProgression(5);
   }
 
   /**
@@ -28,6 +25,9 @@ class Complete extends React.Component {
    * @return {JSX.Element}
    */
   render() {
+    const displayName = this.props.epkSyncer ?
+      this.props.epkSyncer.displayName : 'user';
+
     return (
       <div className={'container'}>
         <div className="my-5 text-center">
@@ -40,7 +40,7 @@ class Complete extends React.Component {
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">
-            <p>Congratulations {this.props.epkSyncer.displayName}, you have
+            <p>Congratulations {displayName}, you have
               successfully created your EPK! You will hear from us soon as we
               work with Notting Hill Arts Club in the meantime. Welcome to
               Amphere!</p>
@@ -54,6 +54,7 @@ class Complete extends React.Component {
 Complete.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.func,
 };
 
 export default Complete;

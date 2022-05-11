@@ -33,10 +33,7 @@ class ConnectSocials extends React.Component {
    *
    */
   componentDidMount() {
-    if (this.props.artistSyncer) {
-      this.props.artistSyncer.signUpProg = 3;
-      this.props.artistSyncer.push();
-    }
+    this.props.onFlowProgression(3);
 
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
@@ -269,6 +266,7 @@ class ConnectSocials extends React.Component {
 ConnectSocials.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.func,
   onError: PropTypes.func,
 };
 

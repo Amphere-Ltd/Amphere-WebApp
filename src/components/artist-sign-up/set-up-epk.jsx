@@ -34,10 +34,7 @@ class SetUpEpk extends React.Component {
    *
    */
   componentDidMount() {
-    if (this.props.artistSyncer) {
-      this.props.artistSyncer.signUpProg = 2;
-      this.props.artistSyncer.push();
-    }
+    this.props.onFlowProgression(2);
 
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
@@ -381,6 +378,7 @@ class SetUpEpk extends React.Component {
 SetUpEpk.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.any,
   onError: PropTypes.func,
 };
 

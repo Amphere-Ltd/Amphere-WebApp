@@ -36,10 +36,7 @@ class Review extends React.Component {
    *
    */
   componentDidMount() {
-    if (this.props.artistSyncer) {
-      this.props.artistSyncer.signUpProg = 4;
-      this.props.artistSyncer.push();
-    }
+    this.props.onFlowProgression(4);
 
     if (this.props.epkSyncer) {
       this.setState((prevState) => {
@@ -223,6 +220,7 @@ class Review extends React.Component {
 Review.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.func,
   onError: PropTypes.func,
 };
 

@@ -31,11 +31,13 @@ class ArtistSignUp extends React.Component {
     super(props);
     this.state = {
       didAutoRedirect: false,
+      signUpProg: 0,
       artistSyncer: null,
       epkSyncer: null,
       error: null,
     };
 
+    this.onFlowProgression = this.onFlowProgression.bind(this);
     this.onError = this.onError.bind(this);
   }
 
@@ -85,6 +87,22 @@ class ArtistSignUp extends React.Component {
 
   /**
    *
+   * @param {Number} prog
+   */
+  onFlowProgression(prog) {
+    if (this.state.artistSyncer) {
+      // eslint-disable-next-line react/no-direct-mutation-state
+      this.state.artistSyncer.signUpProg = prog;
+      this.state.artistSyncer.push();
+    }
+
+    this.setState((prevState) => {
+      return {...prevState, signUpProg: prog};
+    });
+  }
+
+  /**
+   *
    * @param {String} err
    */
   onError(err) {
@@ -105,6 +123,7 @@ class ArtistSignUp extends React.Component {
             <Welcome
               artistSyncer={this.state.artistSyncer}
               epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}
               onError={this.onError}/>
           }/>
         <Route path='profile-picture'
@@ -112,6 +131,7 @@ class ArtistSignUp extends React.Component {
             <ProfilePicture
               artistSyncer={this.state.artistSyncer}
               epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}
               onError={this.onError}/>
           }/>
         <Route path='set-up-epk'
@@ -119,6 +139,7 @@ class ArtistSignUp extends React.Component {
             <SetUpEpk
               artistSyncer={this.state.artistSyncer}
               epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}
               onError={this.onError}/>
           }/>
         <Route path='connect-socials'
@@ -126,6 +147,7 @@ class ArtistSignUp extends React.Component {
             <ConnectSocials
               artistSyncer={this.state.artistSyncer}
               epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}
               onError={this.onError}/>
           }/>
         <Route path='connect-to-spotify'
@@ -140,13 +162,15 @@ class ArtistSignUp extends React.Component {
             <Review
               artistSyncer={this.state.artistSyncer}
               epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}
               onError={this.onError}/>
           }/>
         <Route path='thank-you'
           element={
             <Complete
               artistSyncer={this.state.artistSyncer}
-              epkSyncer={this.state.epkSyncer}/>
+              epkSyncer={this.state.epkSyncer}
+              onFlowProgression={this.onFlowProgression}/>
           }/>
       </Routes>
     );
@@ -183,9 +207,15 @@ class ArtistSignUp extends React.Component {
       return content;
     };
 
+    const displayName = this.state.artistSyncer ?
+      this.state.artistSyncer.displayName : 'Unknown Artist';
+
     return (
       <div className="container">
-        <TopBar/>
+        <TopBar
+          displayName={displayName}
+          signUpCurrProg={this.state.signUpProg}
+          signUpCompleteProg={5}/>
         {
           this.state.error &&
           <div className="alert alert-danger my-4" role="alert">

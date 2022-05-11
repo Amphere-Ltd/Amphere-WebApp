@@ -31,10 +31,7 @@ class ProfilePicture extends React.Component {
    *
    */
   componentDidMount() {
-    if (this.props.artistSyncer) {
-      this.props.artistSyncer.signUpProg = 1;
-      this.props.artistSyncer.push();
-    }
+    this.props.onFlowProgression(1);
   }
 
   /**
@@ -282,6 +279,7 @@ class ProfilePicture extends React.Component {
 ProfilePicture.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.func,
   onError: PropTypes.func,
 };
 

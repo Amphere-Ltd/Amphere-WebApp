@@ -184,6 +184,7 @@ class Welcome extends React.Component {
 Welcome.propTypes = {
   artistSyncer: PropTypes.any,
   epkSyncer: PropTypes.any,
+  onFlowProgression: PropTypes.func,
   onError: PropTypes.func,
 };
 
