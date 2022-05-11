@@ -6,6 +6,22 @@ import AbstractSyncer from './abstract-syncer';
  *
  */
 class EpkSyncer extends AbstractSyncer {
+  // Remember to add any new fields that need syncing here.
+  accessToSpotify = {};
+  biography = '';
+  contactEmail = '';
+  contactPhone = '';
+  displayName = '';
+  forFansOf = [];
+  genres = [];
+  isIndividual = '';
+  linkToAppleMusic = '';
+  linkToFacebook = '';
+  linkToInstagram = '';
+  linkToSpotify = '';
+  linkToSoundCloud = '';
+  proPicFilenames = '';
+
   /**
    *
    * @param {String} epkID
@@ -60,22 +76,6 @@ class EpkSyncer extends AbstractSyncer {
           };
         },
     );
-
-    // Remember to add any new fields that need syncing here.
-    this.accessToSpotify = {};
-    this.biography = '';
-    this.contactEmail = '';
-    this.contactPhone = '';
-    this.displayName = '';
-    this.forFansOf = [];
-    this.genres = [];
-    this.isIndividual = '';
-    this.linkToAppleMusic = '';
-    this.linkToFacebook = '';
-    this.linkToInstagram = '';
-    this.linkToSpotify = '';
-    this.linkToSoundCloud = '';
-    this.proPicFilenames = '';
   }
 }
 
@@ -88,7 +88,10 @@ const epkSyncHandler = {
    */
   newSyncer: async () => {
     const docRef = await addDoc(collection(service.db, 'epks'), {});
-    return new EpkSyncer(docRef.id);
+    const syncer = new EpkSyncer(docRef.id);
+    await syncer.push();
+    syncers.set(docRef.id, syncer);
+    return syncer;
   },
   /**
    *

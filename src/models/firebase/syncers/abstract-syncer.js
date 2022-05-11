@@ -5,6 +5,11 @@ import service from '../service';
  *
  */
 class AbstractSyncer {
+  firestoreColName = undefined;
+  firestoreDocName = undefined;
+
+  converter = undefined;
+
   /**
    *
    * @param {String} firestoreColName

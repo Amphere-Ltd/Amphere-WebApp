@@ -5,6 +5,15 @@ import epkSyncHandler from './epk-syncer';
  *
  */
 class ArtistSyncer extends AbstractSyncer {
+  // Remember to add any new fields that need syncing here.
+  dateOfBirth = '';
+  displayName = '';
+  epkID = null;
+  gender = '';
+  isIndividual = true;
+  signUpProg = '';
+  username = '';
+
   /**
    *
    * @param {String} firebaseAuthUid
@@ -39,15 +48,6 @@ class ArtistSyncer extends AbstractSyncer {
           };
         },
     );
-
-    // Remember to add any new fields that need syncing here.
-    this.dateOfBirth = '';
-    this.displayName = '';
-    this.epkID = null;
-    this.gender = '';
-    this.isIndividual = true;
-    this.signUpProg = '';
-    this.username = '';
   }
 
   /**
