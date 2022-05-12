@@ -8,7 +8,7 @@ import {
 import {onAuthStateChanged, User} from 'firebase/auth';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
-import authHandler from './models/spotify/auth-handler';
+import CallbackSpotify from './components/common/callback-spotify';
 import ArtistSignUp from './components/artist-sign-up/artist-sign-up';
 import './App.css';
 import service from './models/firebase/service';
@@ -59,21 +59,5 @@ class App extends React.Component {
 }
 
 App.propTypes = {};
-
-/**
- *
- */
-class CallbackSpotify extends React.Component {
-  /**
-   *
-   * @return {null}
-   */
-  render() {
-    const queryString = window.location.hash.substring(1);
-    const queryParams = new URLSearchParams(queryString);
-    authHandler.handleAuthCallback(queryParams);
-    return null;
-  }
-}
 
 export default App;
