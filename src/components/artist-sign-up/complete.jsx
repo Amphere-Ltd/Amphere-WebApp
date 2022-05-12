@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -11,13 +12,33 @@ class Complete extends React.Component {
    */
   constructor(props) {
     super(props);
+    this.state = {displayName: 'user'};
   }
 
   /**
    *
    */
-  componentDidMount() {
-    this.props.onFlowProgression(5);
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      this.setState({displayName: artistSyncer.displayName});
+    }
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      this.setState({displayName: artistSyncer.displayName});
+    }
   }
 
   /**
@@ -25,9 +46,6 @@ class Complete extends React.Component {
    * @return {JSX.Element}
    */
   render() {
-    const displayName = this.props.epkSyncer ?
-      this.props.epkSyncer.displayName : 'user';
-
     return (
       <div className={'container'}>
         <div className="my-5 text-center">
@@ -40,7 +58,7 @@ class Complete extends React.Component {
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">
-            <p>Congratulations {displayName}, you have
+            <p>Congratulations {this.state.displayName}, you have
               successfully created your EPK! You will hear from us soon as we
               work with Notting Hill Arts Club in the meantime. Welcome to
               Amphere!</p>
@@ -52,9 +70,7 @@ class Complete extends React.Component {
 }
 
 Complete.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.func,
+  currUser: PropTypes.object,
 };
 
 export default Complete;

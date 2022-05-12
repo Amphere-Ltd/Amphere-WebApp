@@ -38,6 +38,7 @@ class AbstractSyncer {
 
   /**
    *
+   * @return {Promise<null|AbstractSyncer>}
    */
   async pullInstanceOfSelf() {
     const ref = doc(service.db, this.firestoreColName, this.firestoreDocName)

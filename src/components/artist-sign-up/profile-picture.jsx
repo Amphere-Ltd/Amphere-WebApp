@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {ref, uploadBytes} from 'firebase/storage';
 import service from '../../models/firebase/service';
 import './profile-picture.css';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -25,13 +26,6 @@ class ProfilePicture extends React.Component {
 
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-  }
-
-  /**
-   *
-   */
-  componentDidMount() {
-    this.props.onFlowProgression(1);
   }
 
   /**
@@ -78,7 +72,7 @@ class ProfilePicture extends React.Component {
    *
    * @param {Event} event
    */
-  handleFormSubmit(event) {
+  async handleFormSubmit(event) {
     event.preventDefault();
 
     this.displaySpinner();
@@ -87,7 +81,11 @@ class ProfilePicture extends React.Component {
 
     const sizeIDs = ['imgForIcon', 'imgFor4By3', 'imgFor1By1'];
     const proPicFilenames = [];
-    let uploadCount = 0;
+
+    const artistSyncer =
+      await artistSyncHandler.getSyncer(this.props.currUser.uid);
+    const epkSyncer = await artistSyncer.getEpkSyncer();
+
     for (const sizeID of sizeIDs) {
       const picture = this.state[sizeID];
       const fileExt = picture.name.split('.').pop();
@@ -95,27 +93,25 @@ class ProfilePicture extends React.Component {
       proPicFilenames.push(newFileName);
 
       // TODO: Reusable code.
-      const artistSyncer = this.props.artistSyncer;
       const artistUid = artistSyncer.firebaseDocName;
       const uploadPath = `epkMedia/${artistUid}/${newFileName}`;
       const storageRef = ref(service.storage, uploadPath);
-      uploadBytes(storageRef, picture).then((snapshot) => {
-        uploadCount += 1;
-
-        const epkSyncer = this.props.epkSyncer;
-        epkSyncer.proPicFilenames = proPicFilenames;
-        epkSyncer.push();
-
-        if (uploadCount === proPicFilenames.length) {
-          // TODO: Messy.
-          this.setState((prevState) => {
-            return {...prevState, shouldRedirect: true};
-          });
-        }
-      }).catch((error) => {
+      try {
+        await uploadBytes(storageRef, picture);
+      } catch (error) {
         this.props.onError(error.message);
-      });
+      }
     }
+
+    artistSyncer.signUpProg = 2;
+    await artistSyncer.push();
+
+    epkSyncer.proPicFilenames = proPicFilenames;
+    await epkSyncer.push();
+
+    this.setState((prevState) => {
+      return {...prevState, shouldRedirect: true};
+    });
   }
 
   /**
@@ -277,9 +273,7 @@ class ProfilePicture extends React.Component {
 }
 
 ProfilePicture.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.func,
+  currUser: PropTypes.object,
   onError: PropTypes.func,
 };
 

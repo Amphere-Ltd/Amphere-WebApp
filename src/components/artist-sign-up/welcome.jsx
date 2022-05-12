@@ -32,6 +32,44 @@ class Welcome extends React.Component {
 
   /**
    *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser !== null) {
+      // Triggered by the sign-up or sign-in event in handleFormSubmit().
+
+      /**
+       *
+       * @param {String} userUid
+       */
+      const setSyncersAndRedirect = async (userUid) => {
+        if (this.props.currUser === null) return;
+
+        const artistSyncer =
+          await artistSyncHandler.getSyncer(this.props.currUser.uid);
+        artistSyncer.displayName = this.state.displayName;
+        artistSyncer.signUpProg = 1;
+        await artistSyncer.push();
+
+        const epkSyncer = await artistSyncer.getEpkSyncer();
+        epkSyncer.displayName = this.state.displayName;
+        epkSyncer.contactEmail = this.state.mgtEmail;
+        await epkSyncer.push();
+
+        this.setState((prevState) => {
+          return {...prevState, shouldRedirect: true};
+        });
+      };
+
+      const currUserUid = this.props.currUser.uid;
+      await setSyncersAndRedirect(currUserUid);
+    }
+  }
+
+  /**
+   *
    * @param {Event} event
    */
   handleFormChange(event) {
@@ -60,7 +98,7 @@ class Welcome extends React.Component {
    *
    * @param {Event} event
    */
-  handleFormSubmit(event) {
+  async handleFormSubmit(event) {
     event.preventDefault();
 
     if (this.state.displayName === '' ||
@@ -72,45 +110,27 @@ class Welcome extends React.Component {
 
     // TODO: Validate regex.
 
-    const setSyncers = (userUid) => {
-      artistSyncHandler.getSyncer(userUid).then((artistSyncer) => {
-        artistSyncer.displayName = this.state.displayName;
-
-        artistSyncer.push().then(() => {
-          artistSyncer.getEpkSyncer().then((epkSyncer) => {
-            epkSyncer.displayName = this.state.displayName;
-            epkSyncer.mgtEmail = this.state.mgtEmail;
-
-            epkSyncer.push().then(() => {
-              this.setState((prevState) => {
-                return {...prevState, shouldRedirect: true};
-              });
-            });
-          });
-        });
-      });
-    };
-
-    createUserWithEmailAndPassword(
-        service.auth,
-        this.state.mgtEmail,
-        this.state.password,
-    ).then((userCredential) => {
-      const user = userCredential.user;
-      setSyncers(user.uid);
-    }).catch((error) => {
+    try {
+      await createUserWithEmailAndPassword(
+          service.auth,
+          this.state.mgtEmail,
+          this.state.password,
+      );
+    } catch (error) {
       if (error.code === AuthErrorCodes.EMAIL_EXISTS) {
-        signInWithEmailAndPassword(
-            service.auth,
-            this.state.mgtEmail,
-            this.state.password,
-        ).then((userCredential) => {
-          setSyncers(userCredential.user.uid);
-        }).catch((error) => {
+        // This is an existing user continuing their sign-up flow.
+        try {
+          await signInWithEmailAndPassword(
+              service.auth,
+              this.state.mgtEmail,
+              this.state.password,
+          );
+        } catch (error) {
+          // There is something wrong.
           this.props.onError(error.message);
-        });
+        }
       }
-    });
+    }
   }
 
   /**
@@ -182,9 +202,7 @@ class Welcome extends React.Component {
 }
 
 Welcome.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.func,
+  currUser: PropTypes.object,
   onError: PropTypes.func,
 };
 

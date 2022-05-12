@@ -1,5 +1,3 @@
-import {addDoc, collection} from 'firebase/firestore';
-import service from '../service';
 import AbstractSyncer from './abstract-syncer';
 
 /**
@@ -33,12 +31,6 @@ class EpkSyncer extends AbstractSyncer {
         (snapshot, options) => {
           const data = snapshot.data(options);
           const instance = new EpkSyncer(epkID);
-
-          if (data === {}) {
-            // This is a newly-created document.
-            return instance;
-          }
-
           // Remember to add any new fields that need syncing here.
           instance.accessToSpotify = data.accessToSpotify;
           instance.biography = data.biography;
@@ -84,29 +76,29 @@ const syncers = new Map();
 const epkSyncHandler = {
   /**
    *
-   * @return {Promise<EpkSyncer>}
-   */
-  newSyncer: async () => {
-    const docRef = await addDoc(collection(service.db, 'epks'), {});
-    const syncer = new EpkSyncer(docRef.id);
-    await syncer.push();
-    syncers.set(docRef.id, syncer);
-    return syncer;
-  },
-  /**
-   *
    * @param {String} epkID
    * @return {Promise<EpkSyncer>}
    */
   getSyncer: async (epkID) => {
     if (syncers.has(epkID)) {
+      // We have a locally-saved copy of the EpkSyncer.
       return syncers.get(epkID);
     }
 
+    // We need to either create a new Syncer or pull from the cloud.
     const syncer = new EpkSyncer(epkID);
     const remoteSyncer = await syncer.pullInstanceOfSelf();
-    const latestSyncer = remoteSyncer === null ? syncer : remoteSyncer;
 
+    let latestSyncer;
+    if (remoteSyncer === null) {
+      // This is a newly-created Syncer.
+      latestSyncer = syncer;
+      await latestSyncer.push();
+    } else {
+      latestSyncer = remoteSyncer;
+    }
+
+    // Save this copy locally.
     syncers.set(epkID, latestSyncer);
     return latestSyncer;
   },

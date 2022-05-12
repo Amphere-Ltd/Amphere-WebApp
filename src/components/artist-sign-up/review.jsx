@@ -2,6 +2,7 @@ import React from 'react';
 import {Link, Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './review.css';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -35,23 +36,25 @@ class Review extends React.Component {
   /**
    *
    */
-  componentDidMount() {
-    this.props.onFlowProgression(4);
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
 
-    if (this.props.epkSyncer) {
       this.setState((prevState) => {
         return {
           ...prevState,
-          displayName: this.props.epkSyncer.displayName,
-          genres: this.props.epkSyncer.genres,
-          biography: this.props.epkSyncer.biography,
-          linkToInstagram: this.props.epkSyncer.linkToInstagram,
-          linkToSpotify: this.props.epkSyncer.linkToSpotify,
-          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
-          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
-          linkToFacebook: this.props.epkSyncer.linkToFacebook,
-          contactPhone: this.props.epkSyncer.contactPhone,
-          contactEmail: this.props.epkSyncer.contactEmail,
+          displayName: epkSyncer.displayName,
+          genres: epkSyncer.genres,
+          biography: epkSyncer.biography,
+          linkToInstagram: epkSyncer.linkToInstagram,
+          linkToSpotify: epkSyncer.linkToSpotify,
+          linkToAppleMusic: epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: epkSyncer.linkToSoundCloud,
+          linkToFacebook: epkSyncer.linkToFacebook,
+          contactPhone: epkSyncer.contactPhone,
+          contactEmail: epkSyncer.contactEmail,
           proPicFiles: [] /* TODO */,
         };
       });
@@ -66,22 +69,26 @@ class Review extends React.Component {
    * @param {Object} prevState
    * @param {Object} snapshot
    */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.epkSyncer === prevProps.epkSyncer) return;
-    if (this.props.epkSyncer) {
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
+
       this.setState((prevState) => {
         return {
           ...prevState,
-          displayName: this.props.epkSyncer.displayName,
-          genres: this.props.epkSyncer.genres,
-          biography: this.props.epkSyncer.biography,
-          linkToInstagram: this.props.epkSyncer.linkToInstagram,
-          linkToSpotify: this.props.epkSyncer.linkToSpotify,
-          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
-          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
-          linkToFacebook: this.props.epkSyncer.linkToFacebook,
-          contactPhone: this.props.epkSyncer.contactPhone,
-          contactEmail: this.props.epkSyncer.contactEmail,
+          displayName: epkSyncer.displayName,
+          genres: epkSyncer.genres,
+          biography: epkSyncer.biography,
+          linkToInstagram: epkSyncer.linkToInstagram,
+          linkToSpotify: epkSyncer.linkToSpotify,
+          linkToAppleMusic: epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: epkSyncer.linkToSoundCloud,
+          linkToFacebook: epkSyncer.linkToFacebook,
+          contactPhone: epkSyncer.contactPhone,
+          contactEmail: epkSyncer.contactEmail,
           proPicFiles: [] /* TODO */,
         };
       });
@@ -94,8 +101,13 @@ class Review extends React.Component {
    *
    * @param {Event} event
    */
-  handleFormSubmit(event) {
+  async handleFormSubmit(event) {
     event.preventDefault();
+
+    const artistSyncer =
+      await artistSyncHandler.getSyncer(this.props.currUser.uid);
+    artistSyncer.signUpProg = 5;
+    await artistSyncer.push();
     this.setState((prevState) => {
       return {...prevState, shouldRedirect: true};
     });
@@ -218,9 +230,7 @@ class Review extends React.Component {
 }
 
 Review.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.func,
+  currUser: PropTypes.object,
   onError: PropTypes.func,
 };
 

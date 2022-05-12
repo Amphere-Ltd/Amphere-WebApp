@@ -8,10 +8,10 @@ class ArtistSyncer extends AbstractSyncer {
   // Remember to add any new fields that need syncing here.
   dateOfBirth = '';
   displayName = '';
-  epkID = null;
+  epkID = undefined;
   gender = '';
   isIndividual = true;
-  signUpProg = '';
+  signUpProg = 0;
   username = '';
 
   /**
@@ -48,6 +48,8 @@ class ArtistSyncer extends AbstractSyncer {
           };
         },
     );
+
+    this.epkID = firebaseAuthUid;
   }
 
   /**
@@ -76,13 +78,14 @@ const artistSyncHandler = {
     // We need to either create a new Syncer or pull from the cloud.
     const syncer = new ArtistSyncer(firebaseAuthUid);
     const remoteSyncer = await syncer.pullInstanceOfSelf();
-    const latestSyncer = remoteSyncer === null ? syncer : remoteSyncer;
 
-    if (latestSyncer.epkID === undefined || latestSyncer.epkID === null) {
+    let latestSyncer;
+    if (remoteSyncer === null) {
       // This is a newly-created Syncer.
-      const epkSyncer = await epkSyncHandler.newSyncer();
-      latestSyncer.epkID = epkSyncer.firestoreDocName;
+      latestSyncer = syncer;
       await latestSyncer.push();
+    } else {
+      latestSyncer = remoteSyncer;
     }
 
     // Save this copy locally.

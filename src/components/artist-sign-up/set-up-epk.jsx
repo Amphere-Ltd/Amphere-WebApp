@@ -1,6 +1,7 @@
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -33,18 +34,19 @@ class SetUpEpk extends React.Component {
   /**
    *
    */
-  componentDidMount() {
-    this.props.onFlowProgression(2);
-
-    if (this.props.epkSyncer) {
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
       this.setState((prevState) => {
         return {
           ...prevState,
-          contactPhone: this.props.epkSyncer.contactPhone,
-          contactEmail: this.props.epkSyncer.contactEmail,
-          genres: this.props.epkSyncer.genres,
-          biography: this.props.epkSyncer.biography,
-          forFansOf: this.props.epkSyncer.forFansOf,
+          contactPhone: epkSyncer.contactPhone,
+          contactEmail: epkSyncer.contactEmail,
+          genres: epkSyncer.genres,
+          biography: epkSyncer.biography,
+          forFansOf: epkSyncer.forFansOf,
         };
       });
     } else {
@@ -58,17 +60,20 @@ class SetUpEpk extends React.Component {
    * @param {Object} prevState
    * @param {Object} snapshot
    */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.epkSyncer === prevProps.epkSyncer) return;
-    if (this.props.epkSyncer) {
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
       this.setState((prevState) => {
         return {
           ...prevState,
-          contactPhone: this.props.epkSyncer.contactPhone,
-          contactEmail: this.props.epkSyncer.contactEmail,
-          genres: this.props.epkSyncer.genres,
-          biography: this.props.epkSyncer.biography,
-          forFansOf: this.props.epkSyncer.forFansOf,
+          contactPhone: epkSyncer.contactPhone,
+          contactEmail: epkSyncer.contactEmail,
+          genres: epkSyncer.genres,
+          biography: epkSyncer.biography,
+          forFansOf: epkSyncer.forFansOf,
         };
       });
     } else {
@@ -136,21 +141,27 @@ class SetUpEpk extends React.Component {
    *
    * @param {Event} event
    */
-  handleFormSubmit(event) {
+  async handleFormSubmit(event) {
     event.preventDefault();
 
     // TODO: Validate input data.
 
-    const epkSyncer = this.props.epkSyncer;
+    const artistSyncer =
+      await artistSyncHandler.getSyncer(this.props.currUser.uid);
+    const epkSyncer = await artistSyncer.getEpkSyncer();
+
+    artistSyncer.signUpProg = 3;
+    await artistSyncer.push();
+
     epkSyncer.contactPhone = this.state.contactPhone;
     epkSyncer.contactEmail = this.state.contactEmail;
     epkSyncer.genres = this.state.genres;
     epkSyncer.biography = this.state.biography;
     epkSyncer.forFansOf = this.state.forFansOf;
-    epkSyncer.push().then(() => {
-      this.setState((prevState) => {
-        return {...prevState, shouldRedirect: true};
-      });
+    await epkSyncer.push();
+
+    this.setState((prevState) => {
+      return {...prevState, shouldRedirect: true};
     });
   }
 
@@ -376,9 +387,7 @@ class SetUpEpk extends React.Component {
 }
 
 SetUpEpk.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.any,
+  currUser: PropTypes.object,
   onError: PropTypes.func,
 };
 

@@ -3,6 +3,7 @@ import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import authHandler from '../../models/spotify/auth-handler';
 import artistHandler from '../../models/spotify/artist-handler';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -32,18 +33,19 @@ class ConnectSocials extends React.Component {
   /**
    *
    */
-  componentDidMount() {
-    this.props.onFlowProgression(3);
-
-    if (this.props.epkSyncer) {
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
       this.setState((prevState) => {
         return {
           ...prevState,
-          linkToInstagram: this.props.epkSyncer.linkToInstagram,
-          linkToSpotify: this.props.epkSyncer.linkToSpotify,
-          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
-          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
-          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+          linkToInstagram: epkSyncer.linkToInstagram,
+          linkToSpotify: epkSyncer.linkToSpotify,
+          linkToAppleMusic: epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: epkSyncer.linkToSoundCloud,
+          linkToFacebook: epkSyncer.linkToFacebook,
         };
       });
     } else {
@@ -57,17 +59,20 @@ class ConnectSocials extends React.Component {
    * @param {Object} prevState
    * @param {Object} snapshot
    */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.epkSyncer === prevProps.epkSyncer) return;
-    if (this.props.epkSyncer) {
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
       this.setState((prevState) => {
         return {
           ...prevState,
-          linkToInstagram: this.props.epkSyncer.linkToInstagram,
-          linkToSpotify: this.props.epkSyncer.linkToSpotify,
-          linkToAppleMusic: this.props.epkSyncer.linkToAppleMusic,
-          linkToSoundCloud: this.props.epkSyncer.linkToSoundCloud,
-          linkToFacebook: this.props.epkSyncer.linkToFacebook,
+          linkToInstagram: epkSyncer.linkToInstagram,
+          linkToSpotify: epkSyncer.linkToSpotify,
+          linkToAppleMusic: epkSyncer.linkToAppleMusic,
+          linkToSoundCloud: epkSyncer.linkToSoundCloud,
+          linkToFacebook: epkSyncer.linkToFacebook,
         };
       });
     } else {
@@ -115,21 +120,26 @@ class ConnectSocials extends React.Component {
    *
    * @param {Event} event
    */
-  handleFormSubmit(event) {
+  async handleFormSubmit(event) {
     event.preventDefault();
 
     // TODO: Validate input data.
 
-    const epkSyncer = this.props.epkSyncer;
+    const artistSyncer =
+      await artistSyncHandler.getSyncer(this.props.currUser.uid);
+    const epkSyncer = await artistSyncer.getEpkSyncer();
+
+    artistSyncer.signUpProg = 4;
+    await artistSyncer.push();
+
     epkSyncer.linkToInstagram = this.state.linkToInstagram;
     epkSyncer.linkToSpotify = this.state.linkToSpotify;
     epkSyncer.linkToAppleMusic = this.state.linkToAppleMusic;
     epkSyncer.linkToSoundCloud = this.state.linkToSoundCloud;
     epkSyncer.linkToFacebook = this.state.linkToFacebook;
-    epkSyncer.push().then(() => {
-      this.setState((prevState) => {
-        return {...prevState, shouldRedirect: true};
-      });
+    await epkSyncer.push();
+    this.setState((prevState) => {
+      return {...prevState, shouldRedirect: true};
     });
   }
 
@@ -264,9 +274,7 @@ class ConnectSocials extends React.Component {
 }
 
 ConnectSocials.propTypes = {
-  artistSyncer: PropTypes.any,
-  epkSyncer: PropTypes.any,
-  onFlowProgression: PropTypes.func,
+  currUser: PropTypes.object,
   onError: PropTypes.func,
 };
 
@@ -308,14 +316,15 @@ class ConnectToSpotifyComplete extends React.Component {
   /**
    *
    */
-  componentDidMount() {
-    if (this.props.epkSyncer) {
-      artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
-        this.props.epkSyncer.linkToSpotify = linkToSpotify;
-        this.props.epkSyncer.push().then(() => {
-          this.setState({shouldRedirect: true});
-        });
-      });
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const linkToSpotify = await artistHandler.getCurrUserArtistLink();
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
+      epkSyncer.linkToSpotify = linkToSpotify;
+      await epkSyncer.push();
+      this.setState({shouldRedirect: true});
     }
   }
 
@@ -325,15 +334,16 @@ class ConnectToSpotifyComplete extends React.Component {
    * @param {Object} prevState
    * @param {Object} snapshot
    */
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.epkSyncer === prevProps.epkSyncer) return;
-    if (this.props.epkSyncer) {
-      artistHandler.getCurrUserArtistLink().then((linkToSpotify) => {
-        this.props.epkSyncer.linkToSpotify = linkToSpotify;
-        this.props.epkSyncer.push().then(() => {
-          this.setState({shouldRedirect: true});
-        });
-      });
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const linkToSpotify = await artistHandler.getCurrUserArtistLink();
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
+      epkSyncer.linkToSpotify = linkToSpotify;
+      await epkSyncer.push();
+      this.setState({shouldRedirect: true});
     }
   }
 
@@ -351,7 +361,7 @@ class ConnectToSpotifyComplete extends React.Component {
 }
 
 ConnectToSpotifyComplete.propTypes = {
-  epkSyncer: PropTypes.any,
+  currUser: PropTypes.object,
 };
 
 export {ConnectSocials, ConnectToSpotify, ConnectToSpotifyComplete};

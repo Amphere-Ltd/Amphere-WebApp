@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -11,6 +12,42 @@ class TopBar extends React.Component {
    */
   constructor(props) {
     super(props);
+    this.state = {
+      displayName: 'Unknown Artist',
+      signUpCurrProg: 0,
+    };
+  }
+
+  /**
+   *
+   */
+  async componentDidMount() {
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      this.setState({
+        displayName: artistSyncer.displayName,
+        signUpCurrProg: artistSyncer.signUpProg,
+      });
+    }
+  }
+
+  /**
+   *
+   * @param {Object} prevProps
+   * @param {Object} prevState
+   * @param {Object} snapshot
+   */
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      this.setState({
+        displayName: artistSyncer.displayName,
+        signUpCurrProg: artistSyncer.signUpProg,
+      });
+    }
   }
 
   /**
@@ -18,10 +55,11 @@ class TopBar extends React.Component {
    * @return {JSX.Element}
    */
   render() {
-    const prog = (this.props.signUpCurrProg / this.props.signUpCompleteProg);
-    const progPercentage = Math.floor(prog * 100);
+    const prog = (this.state.signUpCurrProg / this.props.signUpStageCount);
+    const progFullWidth = 175;
+    const progFillWidth = Math.ceil(progFullWidth * prog);
 
-    const shouldShowProg = progPercentage !== 0;
+    const shouldShowProg = prog !== 0;
     // Hide artist's name and progress bar if we are on root page.
     const progClass = shouldShowProg ? 'mw-45 ps-0 pe-4 py-2' : 'd-none';
 
@@ -33,13 +71,14 @@ class TopBar extends React.Component {
         </div>
         <div className={`col ${progClass}`}>
           <div className="d-flex justify-content-end align-items center">
-            <div className="text-end">{this.props.displayName}</div>
+            <div className="text-end">{this.state.displayName}</div>
           </div>
           <div className="d-flex justify-content-end align-items-center">
-            <div className="progress" style={{width: 175, height: 5}}>
-              <div className={`progress-bar bg-amphere-red w-${progPercentage}`}
-                role="progressbar" aria-valuenow={progPercentage}
-                aria-valuemin="0" aria-valuemax="100"></div>
+            <div className="progress" style={{width: progFullWidth, height: 5}}>
+              <div className={`progress-bar bg-amphere-red`}
+                style={{width: progFillWidth}}
+                role="progressbar" aria-valuenow={Math.ceil(prog * 100)}
+                aria-valuemin="0" aria-valuemax="100"/>
             </div>
           </div>
         </div>
@@ -49,9 +88,8 @@ class TopBar extends React.Component {
 }
 
 TopBar.propTypes = {
-  displayName: PropTypes.string,
-  signUpCurrProg: PropTypes.number,
-  signUpCompleteProg: PropTypes.number,
+  currUser: PropTypes.object,
+  signUpStageCount: PropTypes.number,
 };
 
 export default TopBar;
