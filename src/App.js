@@ -54,7 +54,9 @@ class App extends React.Component {
             <ArtistSignUp currUser={this.state.currUser}/>
           }/>
         <Route path={'callback-spotify'}
-          element={<CallbackSpotify/>}/>
+          element={
+            <CallbackSpotify currUser={this.state.currUser}/>
+          }/>
       </Routes>
     );
   }

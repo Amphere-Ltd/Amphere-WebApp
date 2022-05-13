@@ -1,9 +1,10 @@
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import service from '../../models/firebase/service';
+import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 import authHandler from '../../models/spotify/auth-handler';
 import artistHandler from '../../models/spotify/artist-handler';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -317,10 +318,10 @@ class ConnectToSpotifyComplete extends React.Component {
    *
    */
   async componentDidMount() {
-    if (this.props.currUser) {
+    if (service.auth.currentUser) {
       const linkToSpotify = await artistHandler.getCurrUserArtistLink();
       const artistSyncer =
-        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+        await artistSyncHandler.getSyncer(service.auth.currentUser.uid);
       const epkSyncer = await artistSyncer.getEpkSyncer();
       epkSyncer.linkToSpotify = linkToSpotify;
       await epkSyncer.push();

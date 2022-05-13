@@ -2,14 +2,14 @@ import axios from 'axios';
 import authHandler from './auth-handler';
 
 const getCurrUserProfile = async () => {
-  const accessToken = authHandler.getAccessToken();
-  const res = await axios.get(`${authHandler.getSpotifyApiUrl()}/me`, {
+  const accessToken = await authHandler.getAccessToken();
+  const response = await axios.get(`${authHandler.getSpotifyApiUrl()}/me`, {
     headers: {
       'Authorization': `Bearer ${accessToken}`,
     },
   });
 
-  return res.data;
+  return response.data;
 };
 
 const getCurrUserArtistLink = async () => {
