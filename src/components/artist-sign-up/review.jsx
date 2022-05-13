@@ -1,8 +1,10 @@
 import React from 'react';
 import {Link, Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import './review.css';
+import {ref, getDownloadURL} from 'firebase/storage';
+import service from '../../models/firebase/service';
 import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import './review.css';
 
 /**
  *
@@ -27,7 +29,7 @@ class Review extends React.Component {
       linkToFacebook: '',
       contactPhone: '',
       contactEmail: '',
-      proPicFiles: [],
+      proPicUrls: [],
     };
 
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -41,6 +43,7 @@ class Review extends React.Component {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
       const epkSyncer = await artistSyncer.getEpkSyncer();
+      const proPicUrls = await this.getProPicUrls();
 
       this.setState((prevState) => {
         return {
@@ -55,7 +58,7 @@ class Review extends React.Component {
           linkToFacebook: epkSyncer.linkToFacebook,
           contactPhone: epkSyncer.contactPhone,
           contactEmail: epkSyncer.contactEmail,
-          proPicFiles: [] /* TODO */,
+          proPicUrls: proPicUrls,
         };
       });
     } else {
@@ -75,6 +78,7 @@ class Review extends React.Component {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
       const epkSyncer = await artistSyncer.getEpkSyncer();
+      const proPicUrls = await this.getProPicUrls();
 
       this.setState((prevState) => {
         return {
@@ -89,12 +93,33 @@ class Review extends React.Component {
           linkToFacebook: epkSyncer.linkToFacebook,
           contactPhone: epkSyncer.contactPhone,
           contactEmail: epkSyncer.contactEmail,
-          proPicFiles: [] /* TODO */,
+          proPicUrls: proPicUrls,
         };
       });
     } else {
       this.props.onError('Connection with database has been lost.');
     }
+  }
+
+  /**
+   *
+   * @return {Promise<String[]>}
+   */
+  async getProPicUrls() {
+    const urls = [];
+    if (this.props.currUser) {
+      const artistSyncer =
+        await artistSyncHandler.getSyncer(this.props.currUser.uid);
+      const epkSyncer = await artistSyncer.getEpkSyncer();
+
+      for (const fileName of epkSyncer.proPicFilenames) {
+        const uploadPath = `epkMedia/${this.props.currUser.uid}/${fileName}`;
+        const storageRef = ref(service.storage, uploadPath);
+        const storageUrl = await getDownloadURL(storageRef);
+        urls.push(storageUrl);
+      }
+    }
+    return urls;
   }
 
   /**
@@ -139,10 +164,9 @@ class Review extends React.Component {
             alt="Error" className="m-1" width="64" height="64"/>;
         });
 
-    const proPicImages = this.state.proPicFiles.map((file) => {
-      return <img key={file.name}
-        src={`data:image/jpeg;base64,${file}`}
-        alt="Unknown Item" className="m-1 rounded" height="180"/>;
+    const proPicImages = this.state.proPicUrls.map((url) => {
+      return <img key={url} src={url} alt="Unknown Item"
+        className="m-1 rounded" height="180"/>;
     });
 
     return (

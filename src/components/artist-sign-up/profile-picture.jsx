@@ -89,11 +89,11 @@ class ProfilePicture extends React.Component {
     for (const sizeID of sizeIDs) {
       const picture = this.state[sizeID];
       const fileExt = picture.name.split('.').pop();
-      const newFileName = `ProfilePicture-${sizeID.substring(6)}${fileExt}`;
+      const newFileName = `ProfilePicture-${sizeID.substring(6)}.${fileExt}`;
       proPicFilenames.push(newFileName);
 
       // TODO: Reusable code.
-      const artistUid = artistSyncer.firebaseDocName;
+      const artistUid = artistSyncer.firestoreDocName;
       const uploadPath = `epkMedia/${artistUid}/${newFileName}`;
       const storageRef = ref(service.storage, uploadPath);
       try {

@@ -6,6 +6,8 @@ import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
  *
  */
 class TopBar extends React.Component {
+  timerID = undefined;
+
   /**
    *
    * @param {TopBar.propTypes} props
@@ -22,14 +24,7 @@ class TopBar extends React.Component {
    *
    */
   async componentDidMount() {
-    if (this.props.currUser) {
-      const artistSyncer =
-        await artistSyncHandler.getSyncer(this.props.currUser.uid);
-      this.setState({
-        displayName: artistSyncer.displayName,
-        signUpCurrProg: artistSyncer.signUpProg,
-      });
-    }
+    this.timerID = setInterval(() => this.tick(), 500);
   }
 
   /**
@@ -39,7 +34,20 @@ class TopBar extends React.Component {
    * @param {Object} snapshot
    */
   async componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.currUser === prevProps.currUser) return;
+  }
+
+  /**
+   *
+   */
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  /**
+   *
+   * @return {Promise<void>}
+   */
+  async tick() {
     if (this.props.currUser) {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
@@ -57,7 +65,7 @@ class TopBar extends React.Component {
   render() {
     const prog = (this.state.signUpCurrProg / this.props.signUpStageCount);
     const progFullWidth = 175;
-    const progFillWidth = Math.ceil(progFullWidth * prog);
+    const progFillWidth = Math.floor(progFullWidth * prog);
 
     const shouldShowProg = prog !== 0;
     // Hide artist's name and progress bar if we are on root page.
@@ -75,7 +83,8 @@ class TopBar extends React.Component {
           </div>
           <div className="d-flex justify-content-end align-items-center">
             <div className="progress" style={{width: progFullWidth, height: 5}}>
-              <div className={`progress-bar bg-amphere-red`}
+              <div
+                className={`progress-bar progress-bar-animated bg-amphere-red`}
                 style={{width: progFillWidth}}
                 role="progressbar" aria-valuenow={Math.ceil(prog * 100)}
                 aria-valuemin="0" aria-valuemax="100"/>
