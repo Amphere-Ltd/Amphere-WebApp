@@ -154,6 +154,7 @@ class ProfilePicture extends React.Component {
    */
   displaySpinner() {
     document.getElementById('spinner').style.display = 'flex';
+    document.getElementById('uploadButton').style.display = 'none';
     document.getElementById('submitButton').style.display = 'none';
   }
 
@@ -239,7 +240,7 @@ class ProfilePicture extends React.Component {
               </div>
             </div>
             {/* Upload button for all three images */}
-            <div className="row text-center">
+            <div className="row text-center" id={'uploadButton'}>
               <label htmlFor="imgForAllSizes" className="amphere-pill-button"
                 style={{cursor: 'pointer'}}>
                 U P L O A D
