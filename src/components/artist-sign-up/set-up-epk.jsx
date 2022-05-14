@@ -205,7 +205,6 @@ class SetUpEpk extends React.Component {
     const presetGenres = [
       'Alternative Rock',
       'Ambient',
-      'Audiobooks',
       'Blues',
       'Business',
       'Classical',
