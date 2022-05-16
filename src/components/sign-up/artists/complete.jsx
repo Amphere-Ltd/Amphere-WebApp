@@ -58,10 +58,12 @@ class Complete extends React.Component {
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">
-            <p>Congratulations {this.state.displayName}, you have
+            <p>
+              Congratulations {this.state.displayName}, you have
               successfully created your EPK! You will hear from us soon as we
               work with Notting Hill Arts Club in the meantime. Welcome to
-              Amphere!</p>
+              Amphere!
+            </p>
           </div>
         </div>
       </div>

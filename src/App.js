@@ -5,7 +5,7 @@ import {
   Routes,
 } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import {onAuthStateChanged, User} from 'firebase/auth';
+import {onAuthStateChanged} from 'firebase/auth';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import service from './models/firebase/service';
@@ -13,6 +13,7 @@ import LoadingScreen from './components/common/loading-screen';
 import DeveloperData from './components/common/developer-data';
 import CallbackSpotify from './components/common/callback-spotify';
 import SignUpArtists from './components/sign-up/artists/sign-up-artists';
+import ArtistsHome from './components/artists/home/artists-home';
 import './App.css';
 
 /**
@@ -83,6 +84,10 @@ class App extends React.Component {
           <Route path={'sign-up/artists/*'}
             element={
               <SignUpArtists currUser={this.state.currUser}/>
+            }/>
+          <Route path={'artists/:userUid'}
+            element={
+              <ArtistsHome currUser={this.state.currUser}/>
             }/>
           <Route path={'callback-spotify'}
             element={

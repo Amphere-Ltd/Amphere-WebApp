@@ -17,16 +17,16 @@ function Datasheet(props) {
       <div className={'row'}>
         <div className={'col'}>
           <ProfileCard
-            proPicUrl={this.props.proPicUrl}
-            bannerUrl={this.props.bannerUrl}
-            displayName={this.props.displayName}
-            genres={this.props.genres}
-            description={this.props.description}
-            forFansOf={this.props.forFansOf}/>
+            proPicUrl={props.proPicUrl}
+            bannerUrl={props.bannerUrl}
+            displayName={props.displayName}
+            genres={props.genres}
+            description={props.description}
+            forFansOf={props.forFansOf}/>
         </div>
         <div className={'col'}>
-          <h2>Top Track</h2>
-          <h2>Recent Gigs</h2>
+          <h4>Top Track</h4>
+          <h4>Recent Gigs</h4>
           <button className={'amphere-pill-button'}
             value={'Check Availability'}/>
         </div>
