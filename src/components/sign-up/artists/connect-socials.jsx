@@ -150,10 +150,10 @@ class ConnectSocials extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/review'}/>;
+      return <Navigate replace to={'/sign-up/artists/review'}/>;
     }
     if (this.state.shouldConnectToSpotify) {
-      return <Navigate replace to={'/sign-up/connect-to-spotify'}/>;
+      return <Navigate replace to={'/sign-up/artists/connect-to-spotify'}/>;
     }
 
     return (
@@ -287,8 +287,8 @@ class ConnectToSpotify extends React.Component {
    *
    */
   componentDidMount() {
-    const redirectUrl =
-      `${authHandler.getAppUrlBase()}/sign-up/connect-to-spotify-complete`;
+    const localPath = '/sign-up/artists/connect-to-spotify-complete';
+    const redirectUrl = `${authHandler.getAppUrlBase()}${localPath}`;
     authHandler.authAndSetRedirect(redirectUrl);
   }
 
@@ -354,7 +354,7 @@ class ConnectToSpotifyComplete extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/connect-socials'}/>;
+      return <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
     } else {
       return null;
     }

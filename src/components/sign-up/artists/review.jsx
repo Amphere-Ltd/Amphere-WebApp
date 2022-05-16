@@ -144,7 +144,7 @@ class Review extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/thank-you'}/>;
+      return <Navigate replace to={'/sign-up/artists/thank-you'}/>;
     }
 
     const socialLinksToIcons = {

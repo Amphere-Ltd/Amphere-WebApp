@@ -65,7 +65,7 @@ class App extends React.Component {
     } else {
       let root;
       if (this.state.currUser === null) {
-        root = <Navigate replace to={'/sign-up'}/>;
+        root = <Navigate replace to={'/sign-up/artists'}/>;
       } else {
         root = <Navigate replace to={`/artists/${this.state.currUser.uid}`}/>;
       }
@@ -80,7 +80,7 @@ class App extends React.Component {
             element={
               <DeveloperData/>
             }/>
-          <Route path={'sign-up/*'}
+          <Route path={'sign-up/artists/*'}
             element={
               <SignUpArtists currUser={this.state.currUser}/>
             }/>

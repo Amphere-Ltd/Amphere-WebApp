@@ -141,7 +141,7 @@ class Welcome extends React.Component {
     // TODO: Redirect.
 
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/profile-picture'}/>;
+      return <Navigate replace to={'/sign-up/artists/profile-picture'}/>;
     }
 
     return (

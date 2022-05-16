@@ -164,7 +164,7 @@ class ProfilePicture extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/set-up-epk'}/>;
+      return <Navigate replace to={'/sign-up/artists/set-up-epk'}/>;
     }
 
     return (

@@ -199,7 +199,7 @@ class SetUpEpk extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/connect-socials'}/>;
+      return <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
     }
 
     const presetGenres = [
