@@ -2,9 +2,9 @@ import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {ref, uploadBytes} from 'firebase/storage';
-import service from '../../models/firebase/service';
+import service from '../../../models/firebase/service';
 import './profile-picture.css';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -182,7 +182,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-8 d-flex justify-content-center">
                   <img id="outputForIcon" alt="Preview your profile picture"
-                    src={require('../../assets/bg-black.jpg')}/>
+                    src={require('../../../assets/bg-black.jpg')}/>
                 </div>
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
@@ -191,7 +191,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-2 d-flex justify-content-center">
                   <label htmlFor="imgForIcon" style={{cursor: 'pointer'}}>
-                    <img alt="" src={require('../../assets/icon-pencil.png')}
+                    <img alt="" src={require('../../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
                 </div>
@@ -203,7 +203,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-8 d-flex justify-content-center">
                   <img id="outputFor4By3" alt="Preview your profile picture"
-                    src={require('../../assets/bg-black.jpg')}/>
+                    src={require('../../../assets/bg-black.jpg')}/>
                 </div>
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
@@ -212,7 +212,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-2 d-flex justify-content-center">
                   <label htmlFor="imgFor4By3" style={{cursor: 'pointer'}}>
-                    <img alt="" src={require('../../assets/icon-pencil.png')}
+                    <img alt="" src={require('../../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
                 </div>
@@ -224,7 +224,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-8 d-flex justify-content-center">
                   <img id="outputFor1By1" alt="Preview your profile picture"
-                    src={require('../../assets/bg-black.jpg')}/>
+                    src={require('../../../assets/bg-black.jpg')}/>
                 </div>
                 <div className="row h-0">
                   <input type="file" className="d-none" accept="image/*"
@@ -233,7 +233,7 @@ class ProfilePicture extends React.Component {
                 </div>
                 <div className="row-2 d-flex justify-content-center">
                   <label htmlFor="imgFor1By1" style={{cursor: 'pointer'}}>
-                    <img alt="" src={require('../../assets/icon-pencil.png')}
+                    <img alt="" src={require('../../../assets/icon-pencil.png')}
                       className="mx-auto my-3" width="32"/>
                   </label>
                 </div>

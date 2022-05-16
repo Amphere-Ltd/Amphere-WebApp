@@ -20,10 +20,10 @@ import Complete from './complete';
 /**
  *
  */
-class ArtistSignUp extends React.Component {
+class SignUpArtists extends React.Component {
   /**
    *
-   * @param {ArtistSignUp.propTypes} props
+   * @param {SignUpArtists.propTypes} props
    */
   constructor(props) {
     super(props);
@@ -125,8 +125,8 @@ class ArtistSignUp extends React.Component {
   }
 }
 
-ArtistSignUp.propTypes = {
+SignUpArtists.propTypes = {
   currUser: PropTypes.any,
 };
 
-export default ArtistSignUp;
+export default SignUpArtists;

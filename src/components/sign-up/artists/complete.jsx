@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -54,7 +54,7 @@ class Complete extends React.Component {
         <div className="container-narrow mx-auto">
           <div className="my-5 text-center">
             <img className="img-fluid"
-              src={require('../../assets/banner-empty-user-card.png')}
+              src={require('../../../assets/banner-empty-user-card.png')}
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">

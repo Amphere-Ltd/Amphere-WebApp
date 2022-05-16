@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -74,7 +74,7 @@ class TopBar extends React.Component {
     return (
       <div className="row mb-3">
         <div className="col mw-45 d-flex justify-content-start">
-          <img src={require('../../assets/logo-text.png')} alt="Amphere"
+          <img src={require('../../../assets/logo-text.png')} alt="Amphere"
             width="192" height="56"/>
         </div>
         <div className={`col ${progClass}`}>

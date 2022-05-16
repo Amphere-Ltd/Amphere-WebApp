@@ -6,8 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import service from '../../models/firebase/service';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import service from '../../../models/firebase/service';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
 /**
  *
@@ -153,7 +153,7 @@ class Welcome extends React.Component {
         <div className="container-narrow mx-auto">
           <div className="my-5 text-center">
             <img className="img-fluid"
-              src={require('../../assets/banner-empty-user-card.png')}
+              src={require('../../../assets/banner-empty-user-card.png')}
               alt="Amphere" width="412" height="132"/>
           </div>
           <div className="my-5 text-center">

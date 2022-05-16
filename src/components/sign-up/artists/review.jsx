@@ -2,8 +2,8 @@ import React from 'react';
 import {Link, Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {ref, getDownloadURL} from 'firebase/storage';
-import service from '../../models/firebase/service';
-import artistSyncHandler from '../../models/firebase/syncers/artist-syncer';
+import service from '../../../models/firebase/service';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 import './review.css';
 
 /**
@@ -160,7 +160,7 @@ class Review extends React.Component {
         })
         .map((key) => {
           const val = socialLinksToIcons[key];
-          return <img key={key} src={require(`../../assets/${val}`)}
+          return <img key={key} src={require(`../../../assets/${val}`)}
             alt="Error" className="m-1" width="64" height="64"/>;
         });
 
