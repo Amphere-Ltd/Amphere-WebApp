@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
-import LoadingScreen from '../../common/loading-screen';
 import TopBar from './top-bar';
 import Datasheet from './datasheet';
 
@@ -26,7 +25,7 @@ function Home(props) {
   });
 
   if (artistSyncer === null || epkSyncer === null) {
-    return <LoadingScreen/>;
+    return null;
   } else {
     return (
       <div className={'container'}>
