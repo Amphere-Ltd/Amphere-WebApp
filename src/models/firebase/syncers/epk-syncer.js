@@ -18,7 +18,7 @@ class EpkSyncer extends AbstractSyncer {
   linkToInstagram = '';
   linkToSpotify = '';
   linkToSoundCloud = '';
-  proPicFilenames = '';
+  proPicFilenames = [];
 
   /**
    *
