@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@googlemaps/react-wrapper": "^1.1.34",
+    "@googlemaps/typescript-guards": "^1.0.16",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
     "@testing-library/user-event": "^13.5.0",
@@ -15,6 +17,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.29.4",
+    "fast-equals": "^3.0.3",
     "firebase": "^9.6.11",
     "jquery": "^3.6.0",
     "prop-types": "^15.8.1",

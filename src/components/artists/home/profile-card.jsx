@@ -13,7 +13,7 @@ function ProfileCard(props) {
 
   const genrePanelItems = props.genres.map((genre) =>
     <span key={genre} className='badge rounded-pill mx-1 mt-3 ps-3
-      bg-amphere-red text-light font-weight-normal d-flex align-items-center'>
+      bg-amphere-red text-dark font-weight-normal d-flex align-items-center'>
       {genre}
     </span>,
   );
@@ -26,7 +26,7 @@ function ProfileCard(props) {
   );
 
   return (
-    <div className="card">
+    <div className="card text-dark">
       <img src={props.bannerUrl} className="card-img-top"
         alt={props.displayName}/>
       <div className="card-body">

@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import PropTypes from 'prop-types';
+import GoogleMapsWrapper from '../../common/google-maps-wrapper';
 import ProfileCard from './profile-card';
 
 /**
@@ -13,7 +14,7 @@ function Datasheet(props) {
   });
 
   return (
-    <div className={'container'}>
+    <div className={'container bg-amphere-beige text-dark'}>
       <div className={'row'}>
         <div className={'col'}>
           <ProfileCard
@@ -27,8 +28,10 @@ function Datasheet(props) {
         <div className={'col'}>
           <h4>Top Track</h4>
           <h4>Recent Gigs</h4>
-          <button className={'amphere-pill-button'}
-            value={'Check Availability'}/>
+          <GoogleMapsWrapper/>
+          <button className={'amphere-pill-button'} type={'button'}>
+            Check Availability
+          </button>
         </div>
       </div>
     </div>
