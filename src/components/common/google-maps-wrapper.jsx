@@ -4,6 +4,7 @@ import {Wrapper} from '@googlemaps/react-wrapper';
 import {isLatLngLiteral} from '@googlemaps/typescript-guards';
 import {createCustomEqual} from 'fast-equals';
 
+// See https://developers.google.com/maps/documentation/javascript/react-map#javascript_1.
 // See https://github.com/googlemaps/js-samples/blob/2971c40045eed60a74be5f716ccf2254119b63d8/dist/samples/react-map/docs/index.jsx#L128-L134.
 /**
  *
