@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import {Wrapper} from '@googlemaps/react-wrapper';
 import {isLatLngLiteral} from '@googlemaps/typescript-guards';
 import {createCustomEqual} from 'fast-equals';
@@ -70,7 +70,7 @@ const Map = ({onClick, onIdle, children, style, ...options}) => {
   }, [map, options]);
 
   return (
-    <>
+    <div>
       <div ref={ref} style={style}/>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
@@ -78,7 +78,7 @@ const Map = ({onClick, onIdle, children, style, ...options}) => {
           return React.cloneElement(child, {map});
         }
       })}
-    </>
+    </div>
   );
 };
 
@@ -145,8 +145,7 @@ function GoogleMapsWrapper(props) {
         onClick={onClick}
         onIdle={onIdle}
         zoom={zoom}
-        style={{flexGrow: '1', height: '100%'}} // TODO: Should not be 100%.
-      >
+        style={{minHeight: '100%', flexGrow: 1, borderRadius: '10px'}}>
         {clicks.map((latLng, i) => (
           <Marker key={i} position={latLng} />
         ))}
@@ -155,6 +154,8 @@ function GoogleMapsWrapper(props) {
   );
 }
 
-GoogleMapsWrapper.propTypes = {};
+GoogleMapsWrapper.propTypes = {
+  className: PropTypes.string,
+};
 
 export default GoogleMapsWrapper;

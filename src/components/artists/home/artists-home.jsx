@@ -69,16 +69,20 @@ function ArtistsHome(props) {
   }
 
   return (
-    <div className={'container'}>
-      <TopBar
-        displayName={epkSyncer.displayName}/>
-      <Datasheet
-        proPicUrl={proPicUrl}
-        bannerUrl={bannerUrl}
-        displayName={epkSyncer.displayName}
-        genres={epkSyncer.genres}
-        description={epkSyncer.biography}
-        forFansOf={epkSyncer.forFansOf}/>
+    <div className={'container min-vh-100 d-flex flex-column'}>
+      <div className={'row'}>
+        <TopBar
+          displayName={epkSyncer.displayName}/>
+      </div>
+      <div className={'row pb-5 flex-grow-1'}>
+        <Datasheet
+          proPicUrl={proPicUrl}
+          bannerUrl={bannerUrl}
+          displayName={epkSyncer.displayName}
+          genres={epkSyncer.genres}
+          description={epkSyncer.biography}
+          forFansOf={epkSyncer.forFansOf}/>
+      </div>
     </div>
   );
 }

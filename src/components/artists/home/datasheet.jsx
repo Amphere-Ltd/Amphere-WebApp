@@ -14,10 +14,12 @@ function Datasheet(props) {
   });
 
   return (
-    <div className={'container bg-amphere-beige text-dark'}>
-      <div className={'row'}>
-        <div className={'col'}>
+    <div className={'container-fluid d-flex flex-column bg-amphere-beige ' +
+      'text-dark rounded-fixed-25'}>
+      <div className={'row px-0 flex-grow-1'}>
+        <div className={'col px-0'}>
           <ProfileCard
+            className={'bg-white shadow'}
             proPicUrl={props.proPicUrl}
             bannerUrl={props.bannerUrl}
             displayName={props.displayName}
@@ -25,13 +27,19 @@ function Datasheet(props) {
             description={props.description}
             forFansOf={props.forFansOf}/>
         </div>
-        <div className={'col'}>
-          <h4>Top Track</h4>
-          <h4>Recent Gigs</h4>
-          <GoogleMapsWrapper/>
-          <button className={'amphere-pill-button'} type={'button'}>
-            Check Availability
-          </button>
+        <div className={'col px-0'}>
+          <div className={'container-fluid h-100 p-5 d-flex flex-column'}>
+            <h4 className={'font-weight-bold'}>Top Track</h4>
+            <p>Nothing to show.</p>
+            <h4 className={'font-weight-bold'}>Recent Gigs</h4>
+            <div className={'row flex-grow-1'}>
+              <GoogleMapsWrapper/>
+            </div>
+            <button className={'my-3 amphere-pill-button bg-amphere-brown'}
+              type={'button'}>
+              Check Availability
+            </button>
+          </div>
         </div>
       </div>
     </div>

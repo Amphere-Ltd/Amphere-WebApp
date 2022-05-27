@@ -83,8 +83,23 @@ input[type=submit], .amphere-pill-button {
 }
 
 /* Helper class on top of Bootstrap. */
+.bg-amphere-brown {
+    background-color: #BD6222;
+}
+
+/* Helper class on top of Bootstrap. */
 .container-narrow {
     max-width: 720px;
+}
+
+/* Helper class on top of Bootstrap. */
+.rounded-fixed-10 {
+    border-radius: 10px;
+}
+
+/* Helper class on top of Bootstrap. */
+.rounded-fixed-25 {
+    border-radius: 25px;
 }
 
 /* Helper class that replaces definition in Bootstrap. */

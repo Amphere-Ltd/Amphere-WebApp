@@ -251,9 +251,8 @@ class SetUpEpk extends React.Component {
       'World',
     ];
     const presetGenreItems = presetGenres.map((presetGenre) =>
-      <li key={presetGenre}>
-        <button className="dropdown-item" type="button" name={presetGenre}
-          onClick={this.handleFormChange}>
+      <li key={presetGenre} onClick={this.handleFormChange}>
+        <button className="dropdown-item" type="button" name={presetGenre}>
           {presetGenre}
         </button>
       </li>,
