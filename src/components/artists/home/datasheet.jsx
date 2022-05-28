@@ -14,8 +14,8 @@ function Datasheet(props) {
   });
 
   return (
-    <div className={`container-fluid d-flex flex-column bg-amphere-beige 
-      rounded-fixed-25 ${props.className}`}>
+    <div className={`container-fluid h-100 px-0 d-flex flex-column 
+      bg-amphere-beige rounded-fixed-25 ${props.className}`}>
       <div className={'row px-0 flex-grow-1'}>
         <div className={'col px-0'}>
           <ProfileCard

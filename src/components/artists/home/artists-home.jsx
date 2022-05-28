@@ -5,6 +5,7 @@ import {getDownloadURL, ref} from 'firebase/storage';
 import service from '../../../models/firebase/service';
 import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 import TopBar from './top-bar';
+import ContextMenu from './context-menu';
 import Datasheet from './datasheet';
 
 /**
@@ -75,15 +76,20 @@ function ArtistsHome(props) {
           proPicUrl={proPicUrl}
           displayName={epkSyncer.displayName}/>
       </div>
-      <div className={'row pb-5 flex-grow-1'}>
-        <Datasheet
-          className={'shadow'}
-          proPicUrl={proPicUrl}
-          bannerUrl={bannerUrl}
-          displayName={epkSyncer.displayName}
-          genres={epkSyncer.genres}
-          description={epkSyncer.biography}
-          forFansOf={epkSyncer.forFansOf}/>
+      <div className={'row px-0 pb-5 flex-grow-1'}>
+        <div className={'col-9 px-0'}>
+          <Datasheet
+            className={'shadow'}
+            proPicUrl={proPicUrl}
+            bannerUrl={bannerUrl}
+            displayName={epkSyncer.displayName}
+            genres={epkSyncer.genres}
+            description={epkSyncer.biography}
+            forFansOf={epkSyncer.forFansOf}/>
+        </div>
+        <div className={'col-3 px-0'}>
+          <ContextMenu/>
+        </div>
       </div>
     </div>
   );
