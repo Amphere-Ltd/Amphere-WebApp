@@ -31,11 +31,22 @@ function ProfileCard(props) {
       <img src={props.bannerUrl} alt={props.displayName}
         className={'w-100 mh-50'}
         style={{objectFit: 'cover'}}/>
-      <div className={'p-5'}>
-        <h4 className={'d-flex align-items-center'}>
-          {props.displayName}
-          <img src={require('../../../assets/icon-share-dark.png')}
-            alt={'Share'} className={'ms-2'} width={24} height={24}/>
+      <div className={'px-5 pb-5'} style={{paddingTop: '10px'}}>
+        <h4 className={'d-flex align-items-end'}>
+          <img src={props.proPicUrl} alt={props.displayName}
+            className={'me-3'} width={84} height={84}
+            style={{
+              position: 'absolute',
+              marginBottom: '168px', // (84 * 2) px
+              borderRadius: '50%',
+              objectFit: 'cover',
+            }}/>
+          <div className={'d-flex align-items-center'}
+            style={{marginLeft: '94px' /* (84 + 10) px */}}>
+            {props.displayName}
+            <img src={require('../../../assets/icon-share-dark.png')}
+              alt={'Share'} className={'ms-2'} width={24} height={24}/>
+          </div>
         </h4>
         <div className="mb-3 d-flex justify-content-start align-items-center">
           {genrePanelItems}

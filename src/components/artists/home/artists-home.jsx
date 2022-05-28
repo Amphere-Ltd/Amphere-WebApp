@@ -76,6 +76,7 @@ function ArtistsHome(props) {
       </div>
       <div className={'row pb-5 flex-grow-1'}>
         <Datasheet
+          className={'shadow'}
           proPicUrl={proPicUrl}
           bannerUrl={bannerUrl}
           displayName={epkSyncer.displayName}

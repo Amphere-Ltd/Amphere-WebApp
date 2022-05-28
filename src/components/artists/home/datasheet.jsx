@@ -14,8 +14,8 @@ function Datasheet(props) {
   });
 
   return (
-    <div className={'container-fluid d-flex flex-column bg-amphere-beige ' +
-      'text-dark rounded-fixed-25'}>
+    <div className={`container-fluid d-flex flex-column bg-amphere-beige 
+      rounded-fixed-25 ${props.className}`}>
       <div className={'row px-0 flex-grow-1'}>
         <div className={'col px-0'}>
           <ProfileCard
@@ -27,7 +27,7 @@ function Datasheet(props) {
             description={props.description}
             forFansOf={props.forFansOf}/>
         </div>
-        <div className={'col px-0'}>
+        <div className={'col px-0 text-dark'}>
           <div className={'container-fluid h-100 p-5 d-flex flex-column'}>
             <h4 className={'font-weight-bold'}>Top Track</h4>
             <p>Nothing to show.</p>
@@ -47,6 +47,7 @@ function Datasheet(props) {
 }
 
 Datasheet.propTypes = {
+  className: PropTypes.string,
   proPicUrl: PropTypes.string,
   bannerUrl: PropTypes.string,
   displayName: PropTypes.string,
