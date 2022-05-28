@@ -72,6 +72,7 @@ function ArtistsHome(props) {
     <div className={'container min-vh-100 d-flex flex-column'}>
       <div className={'row'}>
         <TopBar
+          proPicUrl={proPicUrl}
           displayName={epkSyncer.displayName}/>
       </div>
       <div className={'row pb-5 flex-grow-1'}>
