@@ -36,7 +36,11 @@ function TopBar(props) {
               {props.displayName}
             </button>
             <ul className="dropdown-menu" aria-labelledby="userDropdown">
-              <li><a className="dropdown-item" href="#">Coming soon...</a></li>
+              <li>
+                <a className="dropdown-item" onClick={props.signOutCurrUser}>
+                Sign Out
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -48,6 +52,7 @@ function TopBar(props) {
 TopBar.propTypes = {
   proPicUrl: PropTypes.string,
   displayName: PropTypes.string,
+  signOutCurrUser: PropTypes.func,
 };
 
 export default TopBar;

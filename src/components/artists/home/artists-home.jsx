@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom';
+import {Navigate, useParams} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {getDownloadURL, ref} from 'firebase/storage';
 import service from '../../../models/firebase/service';
@@ -54,7 +54,14 @@ function ArtistsHome(props) {
       setBannerUrl(bannerStorageUrl);
       setArtistSyncer(foundArtistSyncer);
       setEpkSyncer(foundEpkSyncer);
+    } else {
+      setArtistSyncer(null);
+      setEpkSyncer(null);
     }
+  };
+
+  const signOutCurrUser = async () => {
+    await service.auth.signOut();
   };
 
   useEffect(() => {
@@ -62,7 +69,7 @@ function ArtistsHome(props) {
   });
 
   if (artistSyncer === null || epkSyncer === null) {
-    return null;
+    return <Navigate replace to={'/'}/>;
   }
 
   if (userUid !== props.currUser.uid) {
@@ -71,10 +78,11 @@ function ArtistsHome(props) {
 
   return (
     <div className={'container min-vh-100 d-flex flex-column'}>
-      <div className={'row'}>
+      <div className={'row px-0'}>
         <TopBar
           proPicUrl={proPicUrl}
-          displayName={epkSyncer.displayName}/>
+          displayName={epkSyncer.displayName}
+          signOutCurrUser={signOutCurrUser}/>
       </div>
       <div className={'row px-0 pb-5 flex-grow-1'}>
         <div className={'col-9 px-0'}>
