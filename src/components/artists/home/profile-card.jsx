@@ -21,6 +21,13 @@ function ProfileCard(props) {
   const forFansOfItems = props.forFansOf.map((relatedArtist) =>
     <span key={relatedArtist} className='badge rounded-pill mt-1 bg-white
       text-dark font-weight-normal shadow d-flex align-items-center'>
+      {/* TODO: Change the img src to display the user's profile picture. */}
+      <img src={props.proPicUrl} alt={props.displayName}
+        className={'me-1'} width={36} height={36}
+        style={{
+          borderRadius: '50%',
+          objectFit: 'cover',
+        }}/>
       {relatedArtist}
     </span>,
   );
@@ -48,7 +55,8 @@ function ProfileCard(props) {
               alt={'Share'} className={'ms-2'} width={24} height={24}/>
           </div>
         </h4>
-        <div className="mb-3 d-flex justify-content-start align-items-center">
+        <div className="mb-3 d-flex justify-content-start align-items-center"
+          style={{marginLeft: '94px' /* (84 + 10) px */}}>
           {genrePanelItems}
         </div>
         <p>
