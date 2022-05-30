@@ -39,6 +39,7 @@ class Welcome extends React.Component {
    * @param {Object} snapshot
    */
   async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.props.currUser === prevProps.currUser) return;
     if (this.props.currUser !== null) {
       // Triggered by the sign-up or sign-in event in handleFormSubmit().
 

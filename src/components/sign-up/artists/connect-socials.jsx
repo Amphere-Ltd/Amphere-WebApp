@@ -18,6 +18,7 @@ class ConnectSocials extends React.Component {
     super(props);
 
     this.state = {
+      unauthorised: false,
       shouldRedirect: false,
       shouldConnectToSpotify: false,
       linkToInstagram: '',
@@ -50,7 +51,9 @@ class ConnectSocials extends React.Component {
         };
       });
     } else {
-      this.props.onError('Connection with database has been lost.');
+      this.setState((prevState) => {
+        return {...prevState, unauthorised: true};
+      });
     }
   }
 
@@ -77,7 +80,9 @@ class ConnectSocials extends React.Component {
         };
       });
     } else {
-      this.props.onError('Connection with database has been lost.');
+      this.setState((prevState) => {
+        return {...prevState, unauthorised: true};
+      });
     }
   }
 
@@ -149,6 +154,10 @@ class ConnectSocials extends React.Component {
    * @return {JSX.Element}
    */
   render() {
+    if (this.state.unauthorised) {
+      return <Navigate replace to={'/sign-up/artists'}/>;
+    }
+
     if (this.state.shouldRedirect) {
       return <Navigate replace to={'/sign-up/artists/review'}/>;
     }

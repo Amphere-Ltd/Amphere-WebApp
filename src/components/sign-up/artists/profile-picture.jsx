@@ -17,15 +17,26 @@ class ProfilePicture extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      unauthorised: false,
       shouldRedirect: false,
-      // See handleFormSubmit().
-      imgForIcon: null,
-      imgFor4By3: null,
-      imgFor1By1: null,
+      imgForIcon: null, // See handleFormSubmit().
+      imgFor4By3: null, // See handleFormSubmit().
+      imgFor1By1: null, // See handleFormSubmit().
     };
 
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+  }
+
+  /**
+   *
+   */
+  componentDidMount() {
+    if (this.props.currUser === null) {
+      this.setState((prevState) => {
+        return {...prevState, unauthorised: true};
+      });
+    }
   }
 
   /**
@@ -163,6 +174,10 @@ class ProfilePicture extends React.Component {
    * @return {JSX.Element}
    */
   render() {
+    if (this.state.unauthorised) {
+      return <Navigate replace to={'/sign-up/artists'}/>;
+    }
+
     if (this.state.shouldRedirect) {
       return <Navigate replace to={'/sign-up/artists/set-up-epk'}/>;
     }

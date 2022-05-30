@@ -43,7 +43,9 @@ class SignUpArtists extends React.Component {
    *
    */
   async componentDidMount() {
-    if (this.props.currUser) {
+    if (this.props.currUser && this.state.isLoadingSyncers) {
+      // Triggered by first visiting the page, or reloading the page.
+
       /**
        *
        * @param {String} userUid
@@ -125,6 +127,9 @@ class SignUpArtists extends React.Component {
         default:
           break;
       }
+      this.setState((prevState) => {
+        return {...prevState, shouldRedirectTo: 0};
+      });
     }
 
     const content = (
