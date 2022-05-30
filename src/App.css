@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;700&display=swap');
 
+/*
+Overriding existing DOM and class definitions.
+*/
+
 body {
     background-color: black;
     color: white;
@@ -10,8 +14,7 @@ h1, h2 {
     letter-spacing: 5px;
 }
 
-/* Input fields for text and passwords in forms. */
-input[type=email], input[type=password], input[type=tel], input[type=text], .amphere-input-dropdown {
+input[type=email], input[type=password], input[type=tel], input[type=text], .amphere-input-text, .amphere-input-dropdown {
     height: 25px;
     background: black;
     color: white;
@@ -20,7 +23,7 @@ input[type=email], input[type=password], input[type=tel], input[type=text], .amp
     padding: 20px;
 }
 
-input[type=email]:focus, input[type=password]:focus, input[type=tel]:focus, input[type=text]:focus, .amphere-input-dropdown:focus {
+input[type=email]:focus, input[type=password]:focus, input[type=tel]:focus, input[type=text]:focus, .amphere-input-text:focus, .amphere-input-dropdown:focus {
     background: #303030;
     color: white;
 }
@@ -41,6 +44,30 @@ input[type=submit], .amphere-pill-button {
     margin-left: auto;
     margin-right: auto;
     padding: 5px;
+}
+
+/*
+Custom Amphere background colours.
+*/
+
+.bg-amphere-red {
+    background-color: #A70000;
+}
+
+.bg-amphere-beige {
+    background-color: #BDA888;
+}
+
+.bg-amphere-brown {
+    background-color: #BD6222;
+}
+
+/*
+Custom Amphere class definitions.
+*/
+
+.container-narrow {
+    max-width: 720px;
 }
 
 /* See input[type=text]. */
@@ -72,47 +99,26 @@ input[type=submit], .amphere-pill-button {
     transform: scale(1.10);
 }
 
-/* Helper class on top of Bootstrap. */
-.bg-amphere-red {
-    background-color: #A70000;
-}
-
-/* Helper class on top of Bootstrap. */
-.bg-amphere-beige {
-    background-color: #BDA888;
-}
-
-/* Helper class on top of Bootstrap. */
-.bg-amphere-brown {
-    background-color: #BD6222;
-}
-
-/* Helper class on top of Bootstrap. */
-.container-narrow {
-    max-width: 720px;
-}
-
-/* Helper class on top of Bootstrap. */
 .rounded-fixed-10 {
     border-radius: 10px;
 }
 
-/* Helper class on top of Bootstrap. */
 .rounded-fixed-25 {
     border-radius: 25px;
 }
 
-/* Helper class that replaces definition in Bootstrap. */
+/*
+Custom Amphere font weights. Helper class that replace the original definition found in Bootstrap.
+*/
+
 .font-weight-normal {
     font-weight: 400;
 }
 
-/* Helper class that replaces definition in Bootstrap. */
 .font-weight-light {
     font-weight: 200;
 }
 
-/* Helper class that replaces definition in Bootstrap. */
 .font-weight-bold {
     font-weight: 700;
 }
