@@ -9,11 +9,21 @@ import React from 'react';
 function ContextMenu(props) {
   return (
     <div className={'container-fluid h-100 d-flex flex-column'}>
-      <button type={'button'}>Schedule</button>
-      <button type={'button'}>Inbox Requests</button>
-      <button type={'button'}>Ratings & Feedback</button>
-      <button type={'button'}>Tour</button>
-      <button type={'button'}>Explore Venues</button>
+      <button type={'button'} className={'amphere-hollow-button my-1'}>
+        Schedule
+      </button>
+      <button type={'button'} className={'amphere-hollow-button my-1'}>
+        Inbox Requests
+      </button>
+      <button type={'button'} className={'amphere-hollow-button my-1'}>
+        Ratings & Feedback
+      </button>
+      <button type={'button'} className={'amphere-hollow-button my-1'}>
+        Tour
+      </button>
+      <button type={'button'} className={'amphere-hollow-button my-1'}>
+        Explore Venues
+      </button>
     </div>
   );
 }

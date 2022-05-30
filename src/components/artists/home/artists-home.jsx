@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {getDownloadURL, ref} from 'firebase/storage';
 import service from '../../../models/firebase/service';
@@ -54,9 +54,6 @@ function ArtistsHome(props) {
       setBannerUrl(bannerStorageUrl);
       setArtistSyncer(foundArtistSyncer);
       setEpkSyncer(foundEpkSyncer);
-    } else {
-      setArtistSyncer(null);
-      setEpkSyncer(null);
     }
   };
 
@@ -69,11 +66,11 @@ function ArtistsHome(props) {
   });
 
   if (artistSyncer === null || epkSyncer === null) {
-    return <Navigate replace to={'/'}/>;
+    return null;
   }
 
   if (userUid !== props.currUser.uid) {
-    return <p>Invalid Request</p>;
+    return null;
   }
 
   return (
