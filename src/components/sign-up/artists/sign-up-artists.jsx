@@ -1,9 +1,12 @@
 import React from 'react';
 import {
+  Navigate,
   Route,
   Routes,
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
+import LoadingScreen from '../../common/loading-screen';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
 import Welcome from './welcome';
@@ -27,7 +30,11 @@ class SignUpArtists extends React.Component {
    */
   constructor(props) {
     super(props);
-    this.state = {error: null};
+    this.state = {
+      isLoadingSyncers: true,
+      shouldRedirectTo: 0,
+      error: null,
+    };
 
     this.onError = this.onError.bind(this);
   }
@@ -35,7 +42,35 @@ class SignUpArtists extends React.Component {
   /**
    *
    */
-  componentDidMount() {}
+  async componentDidMount() {
+    if (this.props.currUser) {
+      /**
+       *
+       * @param {String} userUid
+       */
+      const setSyncersAndRedirect = async (userUid) => {
+        if (this.props.currUser === null) return;
+
+        const artistSyncer =
+          await artistSyncHandler.getSyncer(this.props.currUser.uid);
+
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            isLoadingSyncers: false,
+            shouldRedirectTo: artistSyncer.signUpProg,
+          };
+        });
+      };
+
+      const currUserUid = this.props.currUser.uid;
+      await setSyncersAndRedirect(currUserUid);
+    } else {
+      this.setState((prevState) => {
+        return {...prevState, isLoadingSyncers: false};
+      });
+    }
+  }
 
   /**
    *
@@ -43,11 +78,11 @@ class SignUpArtists extends React.Component {
    * @param {Object} prevState
    * @param {Object} snapshot
    */
-  componentDidUpdate(prevProps, prevState, snapshot) {}
+  async componentDidUpdate(prevProps, prevState, snapshot) {}
 
   /**
    *
-   * @param {String} err
+   * @param {null|String} err
    */
   onError(err) {
     this.setState((prevState) => {
@@ -60,6 +95,38 @@ class SignUpArtists extends React.Component {
    * @return {JSX.Element}
    */
   render() {
+    if (this.state.isLoadingSyncers) {
+      return <LoadingScreen/>;
+    }
+
+    let redirectOverride = null;
+    if (this.state.shouldRedirectTo > 0) {
+      switch (this.state.shouldRedirectTo) {
+        case 1:
+          redirectOverride =
+            <Navigate replace to={'/sign-up/artists/profile-picture'}/>;
+          break;
+        case 2:
+          redirectOverride =
+            <Navigate replace to={'/sign-up/artists/set-up-epk'}/>;
+          break;
+        case 3:
+          redirectOverride =
+            <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
+          break;
+        case 4:
+          redirectOverride =
+            <Navigate replace to={'/sign-up/artists/review'}/>;
+          break;
+        case 5:
+          redirectOverride =
+            <Navigate replace to={'/sign-up/artists/thank-you'}/>;
+          break;
+        default:
+          break;
+      }
+    }
+
     const content = (
       <Routes>
         <Route path='*'
@@ -119,6 +186,7 @@ class SignUpArtists extends React.Component {
           </div>
         }
         {content}
+        {redirectOverride}
         <BotBar/>
       </div>
     );
