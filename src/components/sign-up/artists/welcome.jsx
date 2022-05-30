@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import regexValidator from '../../../models/utilities/regex-validator';
 import service from '../../../models/firebase/service';
 import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
@@ -21,6 +22,7 @@ class Welcome extends React.Component {
     super(props);
     this.state = {
       shouldRedirect: false,
+      shouldRedirectTo: 0,
       displayName: '',
       mgtEmail: '',
       password: '',
@@ -50,7 +52,10 @@ class Welcome extends React.Component {
         const artistSyncer =
           await artistSyncHandler.getSyncer(this.props.currUser.uid);
         artistSyncer.displayName = this.state.displayName;
-        artistSyncer.signUpProg = 1;
+        if (artistSyncer.signUpProg === 0) {
+          // This artist has not gone through the sign-up flow before.
+          artistSyncer.signUpProg = 1;
+        }
         await artistSyncer.push();
 
         const epkSyncer = await artistSyncer.getEpkSyncer();
@@ -59,7 +64,11 @@ class Welcome extends React.Component {
         await epkSyncer.push();
 
         this.setState((prevState) => {
-          return {...prevState, shouldRedirect: true};
+          return {
+            ...prevState,
+            shouldRedirect: true,
+            shouldRedirectTo: artistSyncer.signUpProg,
+          };
         });
       };
 
@@ -108,7 +117,10 @@ class Welcome extends React.Component {
       return;
     }
 
-    // TODO: Validate regex.
+    if (!regexValidator.isValidEmail(this.state.mgtEmail)) {
+      this.props.onError('Please enter a valid email address.');
+      return;
+    }
 
     try {
       await createUserWithEmailAndPassword(
@@ -138,10 +150,21 @@ class Welcome extends React.Component {
    * @return {JSX.Element}
    */
   render() {
-    // TODO: Redirect.
-
     if (this.state.shouldRedirect) {
-      return <Navigate replace to={'/sign-up/artists/profile-picture'}/>;
+      switch (this.state.shouldRedirectTo) {
+        case 1:
+          return <Navigate replace to={'/sign-up/artists/profile-picture'}/>;
+        case 2:
+          return <Navigate replace to={'/sign-up/artists/set-up-epk'}/>;
+        case 3:
+          return <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
+        case 4:
+          return <Navigate replace to={'/sign-up/artists/review'}/>;
+        case 5:
+          return <Navigate replace to={'/sign-up/artists/thank-you'}/>;
+        default:
+          return null;
+      }
     }
 
     return (
