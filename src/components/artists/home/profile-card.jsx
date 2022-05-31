@@ -38,7 +38,7 @@ function ProfileCard(props) {
       <img src={props.bannerUrl} alt={props.displayName}
         className={'w-100 mh-50'}
         style={{objectFit: 'cover'}}/>
-      <div className={'px-5 pb-5'} style={{paddingTop: '10px'}}>
+      <div className={'px-4 pb-4'} style={{paddingTop: '10px'}}>
         <h4 className={'d-flex align-items-end'}>
           <img src={props.proPicUrl} alt={props.displayName}
             className={'me-3'} width={84} height={84}

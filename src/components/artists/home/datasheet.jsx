@@ -29,7 +29,7 @@ function Datasheet(props) {
               forFansOf={props.forFansOf}/>
           </div>
           <div className={'col text-dark'}>
-            <div className={'container-fluid h-100 py-3 d-flex flex-column'}>
+            <div className={'h-100 px-3 pt-4 pb-3 d-flex flex-column'}>
               <h4 className={'font-weight-bold'}>Top Track</h4>
               <p>Nothing to show.</p>
               <h4 className={'font-weight-bold'}>Recent Gigs</h4>
