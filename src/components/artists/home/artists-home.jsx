@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom';
+import {Navigate, useParams} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {getDownloadURL, ref} from 'firebase/storage';
 import service from '../../../models/firebase/service';
@@ -17,6 +17,7 @@ import Datasheet from './datasheet';
 function ArtistsHome(props) {
   const {userUid} = useParams();
 
+  const [unauthorised, setUnauthorised] = useState(false);
   const [artistSyncer, setArtistSyncer] = useState(null);
   const [epkSyncer, setEpkSyncer] = useState(null);
   const [proPicUrl, setProPicUrl] = useState('');
@@ -28,6 +29,12 @@ function ArtistsHome(props) {
 
       const foundArtistSyncer = await artistSyncHandler.getSyncer(userUid);
       const foundEpkSyncer = await foundArtistSyncer.getEpkSyncer();
+
+      if (foundArtistSyncer.signUpProg < 5) {
+        // TODO: Remove magic number.
+        setUnauthorised(true);
+        return;
+      }
 
       const proPicFilename = foundEpkSyncer.proPicFilenames
           .filter((filename) => {
@@ -62,8 +69,14 @@ function ArtistsHome(props) {
   };
 
   useEffect(() => {
+    alert('This page is still in development.');
     setSyncers();
   });
+
+  if (unauthorised) {
+    // TODO: Change this to the default home page once we have one.
+    return <Navigate replace to={'/sign-up/artists'}/>;
+  }
 
   if (artistSyncer === null || epkSyncer === null) {
     return null;
