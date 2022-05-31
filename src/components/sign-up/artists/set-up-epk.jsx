@@ -1,6 +1,7 @@
 import React from 'react';
 import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import regexValidator from '../../../models/utilities/regex-validator';
 import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
 
 /**
@@ -149,7 +150,14 @@ class SetUpEpk extends React.Component {
   async handleFormSubmit(event) {
     event.preventDefault();
 
-    // TODO: Validate input data.
+    if (!regexValidator.isValidPhone(this.state.contactPhone)) {
+      this.props.onError('Please enter a valid phone number.');
+      return;
+    }
+    if (!regexValidator.isValidEmail(this.state.contactEmail)) {
+      this.props.onError('Please enter a valid email address.');
+      return;
+    }
 
     const artistSyncer =
       await artistSyncHandler.getSyncer(this.props.currUser.uid);

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, Navigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {ref, getDownloadURL} from 'firebase/storage';
 import service from '../../../models/firebase/service';
@@ -20,6 +20,7 @@ class Review extends React.Component {
     this.state = {
       unauthorised: false,
       shouldRedirect: false,
+      shouldGoBackTo: 0,
       displayName: '',
       genres: [],
       biography: '',
@@ -43,6 +44,14 @@ class Review extends React.Component {
     if (this.props.currUser) {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
+
+      if (artistSyncer.signUpProg !== 4) {
+        this.setState((prevState) => {
+          return {...prevState, unauthorised: true};
+        });
+        return;
+      }
+
       const epkSyncer = await artistSyncer.getEpkSyncer();
       const proPicUrls = await this.getProPicUrls();
 
@@ -80,6 +89,14 @@ class Review extends React.Component {
     if (this.props.currUser) {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
+
+      if (artistSyncer.signUpProg !== 4) {
+        this.setState((prevState) => {
+          return {...prevState, unauthorised: true};
+        });
+        return;
+      }
+
       const epkSyncer = await artistSyncer.getEpkSyncer();
       const proPicUrls = await this.getProPicUrls();
 
@@ -156,6 +173,19 @@ class Review extends React.Component {
       return <Navigate replace to={'/sign-up/artists/thank-you'}/>;
     }
 
+    if (this.state.shouldGoBackTo > 0) {
+      switch (this.state.shouldGoBackTo) {
+        case 1:
+          return <Navigate replace to={'/sign-up/artists/profile-picture'}/>;
+        case 2:
+          return <Navigate replace to={'/sign-up/artists/set-up-epk'}/>;
+        case 3:
+          return <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
+        default:
+          return null;
+      }
+    }
+
     const socialLinksToIcons = {
       linkToInstagram: 'icon-instagram-dark.png',
       linkToSpotify: 'icon-spotify-dark.png',
@@ -186,71 +216,71 @@ class Review extends React.Component {
         <div className="container text-left text-dark">
           <div className="row g-3">
             <div className="col-xl-6 col-md-12">
-              <Link to={'/sign-up/set-up-epk'}>
-                <div className="h-65 p-3 bg-light rounded zoomable">
-                  <h2>Details</h2>
-                  <form>
-                    <div className="form-group my-1">
-                      <label htmlFor="genres">Genres:</label>
-                      <input type="text" readOnly
-                        className="form-control-plaintext" id="genres"
-                        name="genres" value={this.state.genres.join(', ')}/>
-                    </div>
-                    <div className="form-group my-1">
-                      <label htmlFor="biography">Description:</label>
-                      <textarea className="form-control-plaintext
-                    amphere-input-textarea" id="biography" name="biography"
-                      rows="6" wrap="soft" maxLength="300"
-                      value={this.state.biography} readOnly/>
-                    </div>
-                  </form>
-                </div>
-              </Link>
-              <Link to={'/sign-up/connect-socials'}>
-                <div className="h-35 mt-3 p-3 bg-light rounded zoomable">
-                  <h2>Socials Connected</h2>
-                  <div className="d-flex justify-content-start overflow-auto">
-                    {socialsConnectedIcons}
+              <div className="h-65 p-3 bg-light rounded zoomable">
+                <h2 onClick={() => {
+                  this.setState({shouldGoBackTo: 2});
+                }}>Details</h2>
+                <form>
+                  <div className="form-group my-1">
+                    <label htmlFor="genres">Genres:</label>
+                    <input type="text" readOnly
+                      className="form-control-plaintext" id="genres"
+                      name="genres" value={this.state.genres.join(', ')}/>
                   </div>
+                  <div className="form-group my-1">
+                    <label htmlFor="biography">Description:</label>
+                    <textarea className="form-control-plaintext
+                    amphere-input-textarea" id="biography" name="biography"
+                    rows="6" wrap="soft" maxLength="300"
+                    value={this.state.biography} readOnly/>
+                  </div>
+                </form>
+              </div>
+              <div className="h-35 mt-3 p-3 bg-light rounded zoomable">
+                <h2 onClick={() => {
+                  this.setState({shouldGoBackTo: 3});
+                }}>Socials Connected</h2>
+                <div className="d-flex justify-content-start overflow-auto">
+                  {socialsConnectedIcons}
                 </div>
-              </Link>
+              </div>
             </div>
             <div className="col-xl-6 col-md-12">
-              <Link to={'/sign-up/set-up-epk'}>
-                <div className="h-45 p-3 bg-light rounded zoomable">
-                  <h2>Contact Details</h2>
-                  <form>
-                    <div className="form-group row">
-                      <label htmlFor="contactPhone"
-                        className="col-sm-3 col-form-label">
+              <div className="h-45 p-3 bg-light rounded zoomable">
+                <h2 onClick={() => {
+                  this.setState({shouldGoBackTo: 2});
+                }}>Contact Details</h2>
+                <form>
+                  <div className="form-group row">
+                    <label htmlFor="contactPhone"
+                      className="col-sm-3 col-form-label">
                       Phone:
-                      </label>
-                      <div className="col-sm-9">
-                        <input type="text" readOnly
-                          className="form-control-plaintext" id="contactPhone"
-                          name="contactPhone" value={this.state.contactPhone}/>
-                      </div>
-                      <label htmlFor="contactEmail"
-                        className="col-sm-3 col-form-label">
-                      Mgt. Email:
-                      </label>
-                      <div className="col-sm-9">
-                        <input type="text" readOnly
-                          className="form-control-plaintext" id="contactEmail"
-                          name="contactEmail" value={this.state.contactEmail}/>
-                      </div>
+                    </label>
+                    <div className="col-sm-9">
+                      <input type="text" readOnly
+                        className="form-control-plaintext" id="contactPhone"
+                        name="contactPhone" value={this.state.contactPhone}/>
                     </div>
-                  </form>
-                </div>
-              </Link>
-              <Link to={'/sign-up/profile-picture'}>
-                <div className="h-55 mt-3 p-3 bg-light rounded zoomable">
-                  <h2>Photos</h2>
-                  <div className="d-flex justify-content-start overflow-auto">
-                    {proPicImages}
+                    <label htmlFor="contactEmail"
+                      className="col-sm-3 col-form-label">
+                      Mgt. Email:
+                    </label>
+                    <div className="col-sm-9">
+                      <input type="text" readOnly
+                        className="form-control-plaintext" id="contactEmail"
+                        name="contactEmail" value={this.state.contactEmail}/>
+                    </div>
                   </div>
+                </form>
+              </div>
+              <div className="h-55 mt-3 p-3 bg-light rounded zoomable">
+                <h2 onClick={() => {
+                  this.setState({shouldGoBackTo: 1});
+                }}>Photos</h2>
+                <div className="d-flex justify-content-start overflow-auto">
+                  {proPicImages}
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>

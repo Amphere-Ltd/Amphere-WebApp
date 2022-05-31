@@ -129,8 +129,6 @@ class ConnectSocials extends React.Component {
   async handleFormSubmit(event) {
     event.preventDefault();
 
-    // TODO: Validate input data.
-
     const artistSyncer =
       await artistSyncHandler.getSyncer(this.props.currUser.uid);
     const epkSyncer = await artistSyncer.getEpkSyncer();

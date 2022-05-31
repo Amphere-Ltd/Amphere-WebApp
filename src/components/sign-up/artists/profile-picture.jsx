@@ -86,9 +86,14 @@ class ProfilePicture extends React.Component {
   async handleFormSubmit(event) {
     event.preventDefault();
 
-    this.displaySpinner();
+    if (!this.state.imgForIcon ||
+      !this.state.imgFor4By3 ||
+      !this.state.imgFor4By3) {
+      this.props.onError('You cannot leave your EPK media empty.');
+      return;
+    }
 
-    // TODO: Check for no image uploaded.
+    this.displaySpinner(true);
 
     const sizeIDs = ['imgForIcon', 'imgFor4By3', 'imgFor1By1'];
     const proPicFilenames = [];
@@ -162,11 +167,15 @@ class ProfilePicture extends React.Component {
 
   /**
    *
+   * @param {boolean} shouldDisplay
    */
-  displaySpinner() {
-    document.getElementById('spinner').style.display = 'flex';
-    document.getElementById('uploadButton').style.display = 'none';
-    document.getElementById('submitButton').style.display = 'none';
+  displaySpinner(shouldDisplay) {
+    document.getElementById('spinner').style.display =
+      shouldDisplay ? 'flex' : 'none';
+    document.getElementById('uploadButton').style.display =
+      shouldDisplay ? 'none' : 'block';
+    document.getElementById('submitButton').style.display =
+      shouldDisplay ? 'none' : 'block';
   }
 
   /**
