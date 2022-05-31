@@ -52,7 +52,10 @@ function ProfileCard(props) {
             style={{marginLeft: '94px' /* (84 + 10) px */}}>
             {props.displayName}
             <img src={require('../../../assets/icon-share-dark.png')}
-              alt={'Share'} className={'ms-2'} width={24} height={24}/>
+              alt={'Share'} className={'ms-2'} width={24} height={24}
+              onClick={() => {
+                alert(window.location.href);
+              }}/>
           </div>
         </h4>
         <div className="mb-3 d-flex justify-content-start align-items-center"

@@ -93,13 +93,13 @@ Custom Amphere class definitions.
     height: 50px;
     background: black;
     color: white;
-    text-align: center;
+    text-align: left;
     font-weight: bold;
     border: 2px solid white;
     border-radius: 10px;
     margin-left: auto;
     margin-right: auto;
-    padding: 5px;
+    padding: 5px 15px;
 }
 
 .amphere-hollow-button:hover {
