@@ -92,8 +92,13 @@ function ArtistsHome(props) {
             description={epkSyncer.biography}
             forFansOf={epkSyncer.forFansOf}/>
         </div>
-        <div className={'col-lg-3 pb-3'}>
-          <ContextMenu/>
+        <div className={'col-lg-3'}>
+          <div className={'row pb-3'}>
+            <ContextMenu/>
+          </div>
+          <div className={'row pb-3'}>
+            <div className={'bg-danger'}>Calendar</div>
+          </div>
         </div>
       </div>
     </div>
