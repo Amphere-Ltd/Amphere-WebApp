@@ -75,14 +75,14 @@ function ArtistsHome(props) {
 
   return (
     <div className={'container min-vh-100 d-flex flex-column'}>
-      <div className={'row px-0'}>
+      <div className={'row'}>
         <TopBar
           proPicUrl={proPicUrl}
           displayName={epkSyncer.displayName}
           signOutCurrUser={signOutCurrUser}/>
       </div>
-      <div className={'row px-0 pb-5 flex-grow-1'}>
-        <div className={'col-9 px-0'}>
+      <div className={'row pb-3 flex-grow-1'}>
+        <div className={'col-9'}>
           <Datasheet
             className={'shadow'}
             proPicUrl={proPicUrl}
@@ -92,7 +92,7 @@ function ArtistsHome(props) {
             description={epkSyncer.biography}
             forFansOf={epkSyncer.forFansOf}/>
         </div>
-        <div className={'col-3 px-0'}>
+        <div className={'col-3'}>
           <ContextMenu/>
         </div>
       </div>

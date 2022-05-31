@@ -33,7 +33,7 @@ function ProfileCard(props) {
   );
 
   return (
-    <div className={`container-fluid px-0 h-100 text-dark rounded-fixed-25
+    <div className={`h-100 px-0 text-dark rounded-fixed-25
       overflow-hidden ${props.className}`}>
       <img src={props.bannerUrl} alt={props.displayName}
         className={'w-100 mh-50'}

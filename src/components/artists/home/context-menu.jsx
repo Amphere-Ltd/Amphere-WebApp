@@ -8,7 +8,7 @@ import React from 'react';
  */
 function ContextMenu(props) {
   return (
-    <div className={'container-fluid h-100 d-flex flex-column'}>
+    <div className={'h-100 d-flex flex-column'}>
       <button type={'button'} className={'amphere-hollow-button my-1'}>
         Schedule
       </button>

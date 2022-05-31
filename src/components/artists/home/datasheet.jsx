@@ -14,31 +14,33 @@ function Datasheet(props) {
   });
 
   return (
-    <div className={`container-fluid h-100 px-0 d-flex flex-column 
-      bg-amphere-beige rounded-fixed-25 ${props.className}`}>
-      <div className={'row px-0 flex-grow-1'}>
-        <div className={'col px-0'}>
-          <ProfileCard
-            className={'bg-white shadow'}
-            proPicUrl={props.proPicUrl}
-            bannerUrl={props.bannerUrl}
-            displayName={props.displayName}
-            genres={props.genres}
-            description={props.description}
-            forFansOf={props.forFansOf}/>
-        </div>
-        <div className={'col px-0 text-dark'}>
-          <div className={'container-fluid h-100 p-5 d-flex flex-column'}>
-            <h4 className={'font-weight-bold'}>Top Track</h4>
-            <p>Nothing to show.</p>
-            <h4 className={'font-weight-bold'}>Recent Gigs</h4>
-            <div className={'row flex-grow-1'}>
-              <GoogleMapsWrapper/>
-            </div>
-            <button className={'my-3 amphere-pill-button bg-amphere-brown'}
-              type={'button'}>
+    <div className={`h-100 ${props.className}`}>
+      <div className={'h-100 d-flex flex-column bg-amphere-beige ' +
+        'rounded-fixed-25'}>
+        <div className={'row flex-grow-1'}>
+          <div className={'col pe-0'}>
+            <ProfileCard
+              className={'bg-white shadow'}
+              proPicUrl={props.proPicUrl}
+              bannerUrl={props.bannerUrl}
+              displayName={props.displayName}
+              genres={props.genres}
+              description={props.description}
+              forFansOf={props.forFansOf}/>
+          </div>
+          <div className={'col text-dark'}>
+            <div className={'container-fluid h-100 py-3 d-flex flex-column'}>
+              <h4 className={'font-weight-bold'}>Top Track</h4>
+              <p>Nothing to show.</p>
+              <h4 className={'font-weight-bold'}>Recent Gigs</h4>
+              <div className={'row flex-grow-1'}>
+                <GoogleMapsWrapper/>
+              </div>
+              <button className={'my-3 amphere-pill-button bg-amphere-brown'}
+                type={'button'}>
               Check Availability
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </div>

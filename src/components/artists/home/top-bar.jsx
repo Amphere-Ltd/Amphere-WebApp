@@ -22,7 +22,9 @@ function TopBar(props) {
           </div>
         </div>
         <div className={`col d-flex justify-content-end align-items-center`}>
-          <div className="dropdown">
+          <div className="dropdown" style={{
+            marginRight: '15px', /* To adjust for the whitespace in the logo. */
+          }}>
             <button className={'btn dropdown-toggle bg-white ps-0 pe-2 py-0'}
               type="button" id="userDropdown" data-bs-toggle="dropdown"
               aria-expanded="false"
