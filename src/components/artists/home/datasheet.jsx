@@ -18,7 +18,7 @@ function Datasheet(props) {
       <div className={'h-100 d-flex flex-column bg-amphere-beige ' +
         'rounded-fixed-25'}>
         <div className={'row flex-grow-1'}>
-          <div className={'col pe-0'}>
+          <div className={'col pe-lg-0'}>
             <ProfileCard
               className={'bg-white shadow'}
               proPicUrl={props.proPicUrl}

@@ -81,8 +81,8 @@ function ArtistsHome(props) {
           displayName={epkSyncer.displayName}
           signOutCurrUser={signOutCurrUser}/>
       </div>
-      <div className={'row pb-3 flex-grow-1'}>
-        <div className={'col-9'}>
+      <div className={'row flex-grow-1'}>
+        <div className={'col-lg-9 pb-3'}>
           <Datasheet
             className={'shadow'}
             proPicUrl={proPicUrl}
@@ -92,7 +92,7 @@ function ArtistsHome(props) {
             description={epkSyncer.biography}
             forFansOf={epkSyncer.forFansOf}/>
         </div>
-        <div className={'col-3'}>
+        <div className={'col-lg-3 pb-3'}>
           <ContextMenu/>
         </div>
       </div>

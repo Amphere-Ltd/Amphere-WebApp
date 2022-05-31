@@ -11,17 +11,20 @@ function TopBar(props) {
   return (
     <div className={'container-fluid h-100 mb-3'}>
       <div className={'row'}>
-        <div className={'col d-flex justify-content-start'}>
+        <div className={'col-lg d-flex justify-content-lg-start ' +
+          'justify-content-center align-items-center'}>
           <img src={require('../../../assets/logo-text.png')} alt="Amphere"
             width="192" height="56"/>
         </div>
-        <div className={'col d-flex justify-content-center align-items-center'}>
+        <div className={'col-lg d-flex justify-content-center ' +
+          'align-items-center'}>
           <div className="form-outline w-100">
             <input type="search" className="form-control amphere-input-dropdown"
               placeholder="Search..." aria-label="Search"/>
           </div>
         </div>
-        <div className={`col d-flex justify-content-end align-items-center`}>
+        <div className={'col-lg py-3 d-flex justify-content-lg-end ' +
+          'justify-content-center align-items-center'}>
           <div className="dropdown" style={{
             marginRight: '15px', /* To adjust for the whitespace in the logo. */
           }}>
