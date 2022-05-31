@@ -65,7 +65,8 @@ class App extends React.Component {
       return <LoadingScreen/>;
     } else {
       let root;
-      if (this.state.currUser === null) {
+      if (process.env.NODE_ENV != 'development' ||
+        this.state.currUser === null) {
         root = <Navigate replace to={'/sign-up/artists'}/>;
       } else {
         root = <Navigate replace to={`/artists/${this.state.currUser.uid}`}/>;
