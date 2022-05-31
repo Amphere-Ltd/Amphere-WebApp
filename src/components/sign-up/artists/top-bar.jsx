@@ -69,19 +69,22 @@ class TopBar extends React.Component {
 
     const shouldShowProg = prog !== 0;
     // Hide artist's name and progress bar if we are on root page.
-    const progClass = shouldShowProg ? 'mw-45 ps-0 pe-4 py-2' : 'd-none';
+    const progClass = shouldShowProg ? '' : 'd-none';
 
     return (
       <div className="row mb-3">
-        <div className="col mw-45 d-flex justify-content-start">
+        <div className={'col-sm d-flex ' +
+          'justify-content-sm-start justify-content-center'}>
           <img src={require('../../../assets/logo-text.png')} alt="Amphere"
             width="192" height="56"/>
         </div>
-        <div className={`col ${progClass}`}>
-          <div className="d-flex justify-content-end align-items center">
+        <div className={`col-sm pe-4 py-sm-2 py-0 ${progClass}`}>
+          <div className={'d-flex justify-content-sm-end ' +
+            'justify-content-center align-items-center'}>
             <div className="text-end">{this.state.displayName}</div>
           </div>
-          <div className="d-flex justify-content-end align-items-center">
+          <div className={'d-flex justify-content-sm-end ' +
+            'justify-content-center align-items-center'}>
             <div className="progress" style={{width: progFullWidth, height: 5}}>
               <div
                 className={`progress-bar progress-bar-animated bg-amphere-red`}

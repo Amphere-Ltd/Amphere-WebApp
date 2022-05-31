@@ -21,6 +21,7 @@ function TopBar(props) {
           <div className="form-outline w-100">
             <input type="search" className="form-control amphere-input-dropdown"
               placeholder="Search..." aria-label="Search"/>
+            {/* TODO: Add functionality to this. */}
           </div>
         </div>
         <div className={'col-lg py-3 d-flex justify-content-lg-end ' +
