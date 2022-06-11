@@ -40,6 +40,7 @@ class ConnectSocials extends React.Component {
       const artistSyncer =
         await artistSyncHandler.getSyncer(this.props.currUser.uid);
       const epkSyncer = await artistSyncer.getEpkSyncer();
+      console.log('/connect-socials found an EPK: ', epkSyncer);
       this.setState((prevState) => {
         return {
           ...prevState,
@@ -327,30 +328,15 @@ class ConnectToSpotifyComplete extends React.Component {
   async componentDidMount() {
     if (service.auth.currentUser) {
       const linkToSpotify = await artistHandler.getCurrUserArtistLink();
+      console.log('/connect-to-spotify-complete found a Spotify Artist link: ',
+          linkToSpotify);
       const artistSyncer =
         await artistSyncHandler.getSyncer(service.auth.currentUser.uid);
       const epkSyncer = await artistSyncer.getEpkSyncer();
       epkSyncer.linkToSpotify = linkToSpotify;
       await epkSyncer.push();
-      this.setState({shouldRedirect: true});
-    }
-  }
-
-  /**
-   *
-   * @param {Object} prevProps
-   * @param {Object} prevState
-   * @param {Object} snapshot
-   */
-  async componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.currUser === prevProps.currUser) return;
-    if (this.props.currUser) {
-      const linkToSpotify = await artistHandler.getCurrUserArtistLink();
-      const artistSyncer =
-        await artistSyncHandler.getSyncer(this.props.currUser.uid);
-      const epkSyncer = await artistSyncer.getEpkSyncer();
-      epkSyncer.linkToSpotify = linkToSpotify;
-      await epkSyncer.push();
+      console.log('/connect-to-spotify-complete saved a Spotify Artist link: ',
+          epkSyncer.linkToSpotify);
       this.setState({shouldRedirect: true});
     }
   }
@@ -361,8 +347,12 @@ class ConnectToSpotifyComplete extends React.Component {
    */
   render() {
     if (this.state.shouldRedirect) {
+      authHandler.setIsHandlingCallback(false);
+      console.log('/connect-to-spotify-complete redirecting to: ' +
+        '/connect-socials');
       return <Navigate replace to={'/sign-up/artists/connect-socials'}/>;
     } else {
+      console.log('/connect-to-spotify-complete is loading...');
       return null;
     }
   }

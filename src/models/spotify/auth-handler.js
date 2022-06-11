@@ -99,6 +99,20 @@ const setRedirectUrl = (url) => {
   window.localStorage.setItem('spotifyRedirectUrl', url);
 };
 
+const getIsHandlingCallback = () => {
+  return window.localStorage.getItem('isHandlingSpotifyCallback');
+};
+
+const setIsHandlingCallback = (isHandling) => {
+  if (isHandling) {
+    console.log('spotify/auth-handler is handling callback and blocking ' +
+      'redirects.');
+  } else {
+    console.log('spotify/auth-handler is done handling callback.');
+  }
+  window.localStorage.setItem('isHandlingSpotifyCallback', isHandling);
+};
+
 const authAndSetRedirect = (redirectUrl) => {
   setRedirectUrl(redirectUrl);
 
@@ -118,6 +132,8 @@ const authAndSetRedirect = (redirectUrl) => {
 };
 
 const handleAuthCallback = async (queryParams) => {
+  setIsHandlingCallback(true);
+
   // Step 4: Requests refresh and access tokens.
   if (queryParams.get('error')) {
     // TODO: Handle.
@@ -169,6 +185,8 @@ const authHandler = {
   setAccessToken: setAccessToken,
   getRedirectUrl: getRedirectUrl,
   setRedirectUrl: setRedirectUrl,
+  getIsHandlingCallback: getIsHandlingCallback,
+  setIsHandlingCallback: setIsHandlingCallback,
 };
 
 export default authHandler;

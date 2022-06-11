@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import artistSyncHandler from '../../../models/firebase/syncers/artist-syncer';
+import authHandler from '../../../models/spotify/auth-handler';
 import LoadingScreen from '../../common/loading-screen';
 import TopBar from './top-bar';
 import BotBar from './bot-bar';
@@ -102,7 +103,8 @@ class SignUpArtists extends React.Component {
     }
 
     let redirectOverride = null;
-    if (this.state.shouldRedirectTo > 0) {
+    if (this.state.shouldRedirectTo > 0 &&
+      !authHandler.getIsHandlingCallback()) {
       switch (this.state.shouldRedirectTo) {
         case 1:
           redirectOverride =
