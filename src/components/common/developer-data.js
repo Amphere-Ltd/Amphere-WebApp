@@ -46,7 +46,7 @@ class DeveloperData extends React.Component {
                 <td className="font-monospace">{versionNumber}</td>
               </tr>
               <tr>
-                <th scope="row">Execution Mode</th>
+                <th scope="row">Environment</th>
                 <td className="font-monospace">{executionMode}</td>
               </tr>
               <tr>
