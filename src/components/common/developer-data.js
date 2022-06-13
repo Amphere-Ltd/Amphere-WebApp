@@ -13,7 +13,6 @@ class DeveloperData extends React.Component {
     const versionNumber = process.env.REACT_APP_VERSION;
     const executionMode = process.env.NODE_ENV;
     const nodeVersion = process.env.REACT_APP_NODE;
-    const browsers = process.env.REACT_APP_BROWSER;
 
     return (
       <div className="container">
@@ -52,10 +51,6 @@ class DeveloperData extends React.Component {
               <tr>
                 <th scope="row">Platform</th>
                 <td className="font-monospace">Node.js {nodeVersion}</td>
-              </tr>
-              <tr>
-                <th scope="row">Supported browser(s)</th>
-                <td className="font-monospace">{browsers}</td>
               </tr>
             </tbody>
           </table>
